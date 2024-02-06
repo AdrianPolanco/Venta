@@ -1,4 +1,10 @@
 {
-  "ExpandedNodes": [],
+  "ExpandedNodes": [
+    "",
+    "\\Ventas.Api",
+    "\\Ventas.Infrastructure",
+    "\\Ventas.IoC",
+    "\\Ventas.Web"
+  ],
   "PreviewInSolutionExplorer": false
 }
