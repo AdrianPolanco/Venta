@@ -1,10 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Ventas.Api",
-    "\\Ventas.Infrastructure",
-    "\\Ventas.IoC",
-    "\\Ventas.Web"
+    "\\Ventas",
+    "\\Ventas\\Ventas.Domain",
+    "\\Ventas\\Ventas.Domain\\Core"
   ],
+  "SelectedNode": "\\Ventas\\Ventas.Domain\\Core\\AuditBaseEntity.cs",
   "PreviewInSolutionExplorer": false
 }
