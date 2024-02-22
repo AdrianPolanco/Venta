@@ -1,15 +1,18 @@
 ﻿
 
+using Ventas.Domain.Core;
+
 namespace Ventas.Domain.Entities
 {
-    public class NumeroDocumento
+    public class NumeroDocumento : AuditBaseEntity
     {
 
-
-       /*
-       [idNumeroDocumento]
-      ,[ultimo_Numero]
-      ,[fechaRegistro]
-        */
+        public int? idNumeroDocumento { get; set; }
+        public int? ultimo_Numero { get; set; } = 0;
+       
+        
+       
+        
     }
+      
 }
