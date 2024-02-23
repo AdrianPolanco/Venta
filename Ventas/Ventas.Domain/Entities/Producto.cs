@@ -18,20 +18,22 @@ namespace Ventas.Domain.Entities
 
 
         /*
+         * 
+         * por defecto
        [idProducto]
       ,[nombre]
       ,[idCategoria]
       ,[stock]
       ,[precio]
       ,[esActivo]
-      ,[fechaRegistro].
-
-
+     
+        --Heredados de AuditEntity
       ,[IdUsuarioCreacion]
       ,[FechaMod]
       ,[IdUsuarioMod]
       ,[IdUsuarioElimino]
       ,[FechaElimino]
+      ,[fechaRegistro].
       ,[Eliminado]
          */
     }
