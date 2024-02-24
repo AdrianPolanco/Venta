@@ -3,7 +3,7 @@ using Ventas.Domain.Core;
 
 namespace Ventas.Domain.Entities
 {
-    public class Producto : AuditEntity
+    public class Product : AuditEntity
     {
 
         public int idProducto { get; set; }

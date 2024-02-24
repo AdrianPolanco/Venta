@@ -13,7 +13,8 @@ namespace Ventas.Infrastructure.Context
         public DbSet<Sale> Venta { get; set; }
         public DbSet<User> Usuario { get; set; }
 
-        public DbSet<Producto> Producto { get; set; }
-        public DbSet<NumeroDocumento> NumeroDocumento { get; set; }
+        public DbSet<Product> Producto { get; set; }
+        public DbSet<DocumentNumber> NumeroDocumento { get; set; }
+
     }
 }
