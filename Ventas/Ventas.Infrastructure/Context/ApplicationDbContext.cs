@@ -50,6 +50,17 @@ namespace Ventas.Infrastructure.Context
 
             modelBuilder.Entity<User>().HasOne(u => u.Role).WithOne().HasForeignKey<User>(u => u.idRol);
 
+            ///<summary>
+            ///Configurando la tabla Producto
+            /// </summary>
+            /// 
+
+
+
+
+            ///<summary>
+            ///Configurando la tabla NumeroDocumento
+            /// </summary>
         }
     }
 }
