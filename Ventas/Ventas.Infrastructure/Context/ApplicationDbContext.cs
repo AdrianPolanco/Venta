@@ -54,13 +54,30 @@ namespace Ventas.Infrastructure.Context
             ///Configurando la tabla Producto
             /// </summary>
             /// 
+            modelBuilder.Entity<Product>(productos => {
+                productos.HasKey(p => p.idProducto);
 
+                productos.Property(p => p.idProducto).HasMaxLength(40);
+                productos.Property(p => p.nombre).HasMaxLength(50);
+                productos.Property(p => p.fechaRegistro).HasColumnType("datetime").HasDefaultValueSql("(getdate())");
+                productos.Property(p => p.precio).HasMaxLength(40);
+            });//Faltan datos
 
 
 
             ///<summary>
             ///Configurando la tabla NumeroDocumento
             /// </summary>
+            /// 
+
+            modelBuilder.Entity<DocumentNumber>(documentNumbers => {
+                documentNumbers.HasKey(d => d.idNumeroDocumento);
+
+                documentNumbers.Property(d => d.idNumeroDocumento).HasMaxLength(40);
+                documentNumbers.Property(d => d.idNumeroDocumento).HasMaxLength(50);
+                documentNumbers.Property(d => d.fechaRegistro).HasColumnType("datetime").HasDefaultValueSql("(getdate())");
+                documentNumbers.Property(d => d.FechaElimino).HasColumnType("datetime").HasDefaultValueSql("(getdate())");
+            });//FAltan Datos
         }
     }
 }
