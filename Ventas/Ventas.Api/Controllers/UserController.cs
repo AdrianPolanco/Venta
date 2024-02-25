@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Ventas.Domain.Entities;
+using Ventas.Infrastructure.Extensions;
 using Ventas.Infrastructure.Interfaces;
 using Ventas.Infrastructure.Models;
 
@@ -38,19 +39,21 @@ namespace Ventas.Api.Controllers
                 return StatusCode(500, "Ocurrió un error en el servidor");
             }
         }
-
+      */
         // GET: api/<ValuesController>
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             try
             {
-                Sale? sale = await _userRepository.GetEntity(id);
+                User? user = await _userRepository.GetEntity(id);
 
-                if (sale == null) return NotFound($"Venta no encontrada: Venta con el id {id} no existente.");
+                if (user == null) return NotFound($"Usuario no encontrado: Usuario con el id {id} no existente.");
 
-                _logger.LogInformation("Venta encontrada: ", sale);
-                return Ok(sale);
+                UserModel userModel = user.ToUserModel();
+
+                _logger.LogInformation("Usuario encontrado: ", userModel);
+                return Ok(userModel);
             }
             catch (Exception ex)
             {
@@ -60,7 +63,7 @@ namespace Ventas.Api.Controllers
             }
         }
 
-        [HttpGet("/dates")]
+        /*[HttpGet("/dates")]
         public async Task<IActionResult> GetByDate()
         {
             try

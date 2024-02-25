@@ -85,7 +85,7 @@ namespace Ventas.Infrastructure.Repository
 
             if (!userExists) return null;
 
-            User foundUser = await base.GetEntity(id);
+            User foundUser = await _dbSet.Where(u => u.idUsuario == id).Include(u => u.Role).FirstAsync();
 
             return foundUser;
         }
