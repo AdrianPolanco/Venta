@@ -1,15 +1,12 @@
 ﻿
 using Ventas.Domain.Entities;
+using Ventas.Domain.Repositories;
 
 namespace Ventas.Infrastructure.Interfaces
 {
-    public interface ISaleRepository
+    public interface ISaleRepository: IBaseRepository<Sale>
     {
-        Task<Sale> Create(Sale sale);
-        Task<Sale?> Update(Sale sale, int currentSaleId);
-        Task<Sale?> Delete(Sale sale);
-
-        Task<List<Sale>> GetSales();
-        Task<Sale?> GetSale(int id);
+        Task<List<Sale>> GetByDate();
+        Task<List<Sale>> GetByTotal();
     }
 }

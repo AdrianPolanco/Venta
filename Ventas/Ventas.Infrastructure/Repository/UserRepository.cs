@@ -2,27 +2,14 @@
 using Microsoft.EntityFrameworkCore;
 using Ventas.Domain.Entities;
 using Ventas.Infrastructure.Context;
+using Ventas.Infrastructure.Core;
 using Ventas.Infrastructure.Interfaces;
 
 namespace Ventas.Infrastructure.Repository
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        private readonly ApplicationDbContext _context;
-        public UserRepository(ApplicationDbContext context) {
-            _context = context;
-        }
-        /// <summary>
-        /// Creando usuario en la BD
-        /// </summary>
-        /// <param name="user">User object</param>
-        /// <returns>Usuario creado</returns>
-        public async Task<User> Create(User user)
-        {
-                await _context.Usuario.AddAsync(user);
-                await _context.SaveChangesAsync();
-                return user;
-        }
+        public UserRepository(ApplicationDbContext context): base(context) { }
 
         /// <summary>
         /// Actualizando el usuario, en caso de que exista
@@ -30,22 +17,32 @@ namespace Ventas.Infrastructure.Repository
         /// <param name="user">Los nuevos datos que tendra el usuario</param>
         /// <param name="currentUserId">El id del usuario que se quiere actualizar</param>
         /// <returns>Usuario actualizado</returns>
-        public async Task<User?> Update(User user, int currentUserId)
+        public override async Task<User?> Update(User user, int currentUserId)
         {
-            bool userExists = _context.Usuario.Any<User>(u => u.idUsuario == currentUserId);
-            if (!userExists) return null;
+            try
+            {
+                bool userExists = await base.Exists(u => u.idUsuario == currentUserId);
+                if (!userExists) return null;
 
-            User foundUser = await _context.Usuario.FindAsync(currentUserId);
+                User foundUser = await _dbContext.Usuario.FindAsync(currentUserId);
 
-            foundUser.nombreCompleto = user.nombreCompleto;
-            foundUser.correo = user.correo;
-            foundUser.idRol = user.idRol;
-            foundUser.clave = user.clave;
-            foundUser.esActivo = user.esActivo;
+                foundUser.nombreCompleto = user.nombreCompleto;
+                foundUser.correo = user.correo;
+                foundUser.idRol = user.idRol;
+                foundUser.clave = user.clave;
+                foundUser.esActivo = user.esActivo;
+                foundUser.FechaMod = DateTime.Now;
 
-            await _context.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync();
 
-            return foundUser;
+                return foundUser;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
         }
 
         /// <summary>
@@ -53,14 +50,28 @@ namespace Ventas.Infrastructure.Repository
         /// </summary>
         /// <param name="user">El usuario que se quiere eliminar</param>
         /// <returns>Usuario borrado</returns>
-        public async Task<User?> Delete(User user)
+        public override async Task<User?> Delete(int id)
         {
-            bool userExists = _context.Usuario.Any<User>(u => u.idUsuario == user.idUsuario);
-            if (!userExists) return null;
+            try
+            {
+                bool userExists = await base.Exists(u => u.idUsuario == id);
+                if (!userExists) return null;
 
-            _context.Usuario.Remove(user);
-            await _context.SaveChangesAsync();
-            return user;
+                User deletedUser = await base.GetEntity(id);
+
+                deletedUser.FechaElimino = DateTime.Now;
+                deletedUser.Eliminado = true;
+
+                _dbContext.SaveChangesAsync();
+
+                return deletedUser;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
         }
 
         /// <summary>
@@ -68,26 +79,58 @@ namespace Ventas.Infrastructure.Repository
         /// </summary>
         /// <param name="id">Id del usuario que se quiere obtener</param>
         /// <returns>Usuario coincidente con el id</returns>
-        public async Task<User?> GetUser(int id)
+        public override async Task<User?> GetEntity(int id)
         {
-            bool userExists = _context.Usuario.Any<User>(u => u.idUsuario == id);
+            bool userExists = await base.Exists(u => u.idUsuario == id);
 
             if (!userExists) return null;
 
-            User foundUser = await _context.Usuario.FindAsync(id);
+            User foundUser = await base.GetEntity(id);
 
             return foundUser;
         }
 
-        /// <summary>
-        /// Obteniendo todos los usuarios existentes
-        /// </summary>
-        /// <returns>Todos los usuarios existentes</returns>
-        public async Task<List<User>> GetUsers()
+        public async Task<List<User>> GetByName()
         {
-            List<User> users = await _context.Usuario.ToListAsync();
-            return users;
+            try
+            {
+                List<User> users = await _dbContext.Usuario.OrderBy(u => u.nombreCompleto).ToListAsync();
+                return users;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
         }
 
+        public async Task<List<User>> GetByRole()
+        {
+            try
+            {
+                List<User> users = await _dbContext.Usuario.OrderBy(u => u.idRol).ToListAsync();
+                return users;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<User>> GetByDate()
+        {
+            try
+            {
+                List<User> users = await _dbContext.Usuario.OrderBy(u => u.fechaRegistro).ToListAsync();
+                return users;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

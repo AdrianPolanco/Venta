@@ -8,7 +8,7 @@ namespace Ventas.Infrastructure.Context
     /// Agregado por: Adrian Polanco Ferrer, matrícula 2023-0222
     /// </summary>
     
-    public partial class ApplicationDbContext
+    public partial class ApplicationDbContext: DbContext
     {
         public DbSet<Sale> Venta { get; set; }
         public DbSet<User> Usuario { get; set; }

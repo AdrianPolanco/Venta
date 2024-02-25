@@ -2,9 +2,14 @@
   "ExpandedNodes": [
     "",
     "\\Ventas",
-    "\\Ventas\\Ventas.Domain",
-    "\\Ventas\\Ventas.Domain\\Core"
+    "\\Ventas\\Ventas.Domain\\Core",
+    "\\Ventas\\Ventas.Domain\\Entities",
+    "\\Ventas\\Ventas.Domain\\Repository",
+    "\\Ventas\\Ventas.Infrastructure",
+    "\\Ventas\\Ventas.Infrastructure\\Core",
+    "\\Ventas\\Ventas.Infrastructure\\Extensions",
+    "\\Ventas\\Ventas.Infrastructure\\Interfaces"
   ],
-  "SelectedNode": "\\Ventas\\Ventas.Domain\\Core\\AuditBaseEntity.cs",
+  "SelectedNode": "\\Ventas\\Ventas.Infrastructure\\Core\\BaseRepository.cs",
   "PreviewInSolutionExplorer": false
 }

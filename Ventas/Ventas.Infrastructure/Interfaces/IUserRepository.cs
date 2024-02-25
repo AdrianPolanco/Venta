@@ -1,16 +1,13 @@
 ﻿
 using Ventas.Domain.Entities;
-
+using Ventas.Domain.Repositories;
 
 namespace Ventas.Infrastructure.Interfaces
 {
-    public interface IUserRepository
+    public interface IUserRepository: IBaseRepository<User>
     {
-        Task<User> Create(User user);
-        Task<User?> Update(User user, int currentUserId);
-        Task<User?> Delete(User user);
-
-       Task<List<User>> GetUsers();
-        Task<User?> GetUser(int id);
+        Task<List<User>> GetByName();
+        Task<List<User>> GetByRole();
+        Task<List<User>> GetByDate();
     }
 }

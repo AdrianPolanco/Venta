@@ -11,12 +11,12 @@ namespace Ventas.Infrastructure.Context
 
         public ApplicationDbContext(DbContextOptions options): base(options) { }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+       protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
@@ -49,6 +49,14 @@ namespace Ventas.Infrastructure.Context
             });
 
             modelBuilder.Entity<User>().HasOne(u => u.Role).WithOne().HasForeignKey<User>(u => u.idRol);
+
+            modelBuilder.Entity<Role>( roles =>
+            {
+                roles.HasKey(r => r.idRol);
+                roles.Property(r => r.nombre);
+                roles.Property(r => r.fechaRegistro).HasColumnType("datetime").HasDefaultValueSql("(getdate())");
+            }
+                );
 
         }
     }

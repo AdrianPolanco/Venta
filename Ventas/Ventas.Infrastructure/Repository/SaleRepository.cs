@@ -1,28 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Ventas.Domain.Entities;
 using Ventas.Infrastructure.Context;
+using Ventas.Infrastructure.Core;
 using Ventas.Infrastructure.Interfaces;
 
 namespace Ventas.Infrastructure.Repository
 {
-    public class SaleRepository: ISaleRepository
+    public class SaleRepository: BaseRepository<Sale>, ISaleRepository
     {
-        private readonly ApplicationDbContext _context;
-        public SaleRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-        /// <summary>
-        /// Creando una venta en la BD
-        /// </summary>
-        /// <param name="sale">Venta que se quiere crear</param>
-        /// <returns>Venta creada</returns>
-        public async Task<Sale> Create(Sale sale)
-        {
-            await _context.Venta.AddAsync(sale);
-            await _context.SaveChangesAsync();
-            return sale;
-        }
+        public SaleRepository(ApplicationDbContext context): base(context){ }
+
 
         /// <summary>
         /// Actualizando una venta, en caso de que exista
@@ -30,20 +17,29 @@ namespace Ventas.Infrastructure.Repository
         /// <param name="sale">Los nuevos datos que tendra la venta</param>
         /// <param name="currentSaleId">El id de la venta que se quiere actualizar</param>
         /// <returns>Venta actualizada</returns>
-        public async Task<Sale?> Update(Sale sale, int currentSaleId)
+        public override async Task<Sale?> Update(Sale sale, int currentSaleId)
         {
-            bool saleExists = _context.Venta.Any<Sale>(s => s.idVenta == currentSaleId);
-            if (!saleExists) return null;
+            try
+            {
+                bool saleExists = await base.Exists(s => s.idVenta == currentSaleId);
+                if (!saleExists) return null;
 
-            Sale foundSale = await _context.Venta.FindAsync(currentSaleId);
+                Sale foundSale = await _dbContext.Venta.FindAsync(currentSaleId);
 
-            foundSale.numeroDocumento = sale.numeroDocumento;
-            foundSale.tipoPago = sale.tipoPago;
-            foundSale.total = sale.total;
+                foundSale.numeroDocumento = sale.numeroDocumento;
+                foundSale.tipoPago = sale.tipoPago;
+                foundSale.total = sale.total;
 
-            await _context.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync();
 
-            return foundSale;
+                return foundSale;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
         }
 
         /// <summary>
@@ -51,14 +47,22 @@ namespace Ventas.Infrastructure.Repository
         /// </summary>
         /// <param name="sale">La venta que se quiere eliminar</param>
         /// <returns>Venta borrada</returns>
-        public async Task<Sale?> Delete(Sale sale)
+        public override async Task<Sale?> Delete(int id)
         {
-            bool saleExists = _context.Venta.Any<Sale>(s => s.idVenta == sale.idVenta);
-            if (!saleExists) return null;
+            try
+            {
+                bool saleExists = await base.Exists(s => s.idVenta == id);
+                if (!saleExists) return null;
 
-            _context.Venta.Remove(sale);
-            await _context.SaveChangesAsync();
-            return sale;
+                Sale deletedSale = await base.Delete(id);
+                return deletedSale;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+          
         }
 
         /// <summary>
@@ -66,26 +70,61 @@ namespace Ventas.Infrastructure.Repository
         /// </summary>
         /// <param name="id">Id d la venta que se quiere obtener</param>
         /// <returns>Venta coincidente con el id</returns>
-        public async Task<Sale?> GetSale(int id)
+        public override async Task<Sale?> GetEntity(int id)
         {
-            bool saleExists = _context.Venta.Any<Sale>(s => s.idVenta == id);
-            if (!saleExists) return null;
+            try
+            {
+                bool saleExists = await base.Exists(s => s.idVenta == id);
+                if (!saleExists) return null;
 
-            Sale foundSale = await _context.Venta.FindAsync(id);
+                Sale foundSale = await base.GetEntity(id);
 
-            return foundSale;
+                return foundSale;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+         
         }
 
         /// <summary>
-        /// Obteniendo todas las ventas existentes
+        /// Obteniendo ventas por fecha de registro
         /// </summary>
-        /// <returns>Todas las ventas</returns>
-        public async Task<List<Sale>> GetSales()
+        /// <returns>Ventas en orden de fecha de registro</returns>
+        public async Task<List<Sale>> GetByDate()
         {
-            List<Sale> sales = await _context.Venta.ToListAsync();
-            return sales;
+            try
+            {
+                List<Sale> sales = await _dbContext.Venta.OrderBy(v => v.fechaRegistro).ToListAsync();
+                return sales;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
         }
 
+        /// <summary>
+        /// Obteniendo ventas por total
+        /// </summary>
+        /// <returns>Ventas en orden de monto total</returns>
+        public async Task<List<Sale>> GetByTotal()
+        {
+            try
+            {
+                List<Sale> sales = await _dbContext.Venta.OrderBy(v => v.total).ToListAsync();
+                return sales;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }
 
