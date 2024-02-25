@@ -12,5 +12,6 @@ namespace Ventas.Infrastructure.Context
     {
         public DbSet<Sale> Venta { get; set; }
         public DbSet<User> Usuario { get; set; }
+        public DbSet<Role> Rol { get; set; }
     }
 }

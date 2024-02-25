@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Ventas.Domain.Entities;
-using Ventas.Infrastructure.Extensions;
 using Ventas.Infrastructure.Interfaces;
 using Ventas.Infrastructure.Models;
 
@@ -8,34 +8,33 @@ using Ventas.Infrastructure.Models;
 
 namespace Ventas.Api.Controllers
 {
-    [Route("api/sales")]
+    [Route("api/users")]
     [ApiController]
-    public class SalesController : ControllerBase
+    public class UserController : ControllerBase
     {
-        private readonly ISaleRepository _saleRepository;
-        private ILogger<ISaleRepository> _logger;
+        private readonly IUserRepository _userRepository;
+        private ILogger<IUserRepository> _logger;
 
-        public SalesController(ISaleRepository saleRepository, ILogger<ISaleRepository> logger)
+        public UserController(IUserRepository userRepository, ILogger<IUserRepository> logger)
         {
-            _saleRepository = saleRepository;
+            _userRepository = userRepository;
             _logger = logger;
         }
 
-        [HttpGet]
+      /*  [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                List<Sale> sales = await _saleRepository.GetEntities();
-                List<SaleModel> salesModels = sales.ToSalesModels();
+                List<UserModel> sales = await _userRepository.GetEntities();
 
-                _logger.LogInformation("Ventas encontradas: ", salesModels);
-                return Ok(salesModels);
+                _logger.LogInformation("Ventas encontradas: ", sales);
+                return Ok(sales);
             }
             catch (Exception ex)
             {
 
-                _logger.LogError("Error obteniendo las ventas", ex.ToString());
+                _logger.LogError("Error obteniendo los usuarios", ex.ToString());
                 return StatusCode(500, "Ocurrió un error en el servidor");
             }
         }
@@ -46,7 +45,7 @@ namespace Ventas.Api.Controllers
         {
             try
             {
-                Sale? sale = await _saleRepository.GetEntity(id);
+                Sale? sale = await _userRepository.GetEntity(id);
 
                 if (sale == null) return NotFound($"Venta no encontrada: Venta con el id {id} no existente.");
 
@@ -56,7 +55,7 @@ namespace Ventas.Api.Controllers
             catch (Exception ex)
             {
 
-                _logger.LogError("Error obteniendo las ventas", ex.ToString());
+                _logger.LogError("Error obteniendo los usuarios", ex.ToString());
                 return StatusCode(500, "Ocurrió un error en el servidor");
             }
         }
@@ -66,16 +65,15 @@ namespace Ventas.Api.Controllers
         {
             try
             {
-                List<Sale> sales = await _saleRepository.GetByDate();
-                List<SaleModel> salesModels = sales.ToSalesModels();
+                List<Sale> sales = await _userRepository.GetByDate();
 
-                _logger.LogInformation("Ventas encontradas: ", salesModels);
-                return Ok(salesModels);
+                _logger.LogInformation("Ventas encontradas: ", sales);
+                return Ok(sales);
             }
             catch (Exception ex)
             {
 
-                _logger.LogError("Error obteniendo las ventas", ex.ToString());
+                _logger.LogError("Error obteniendo los usuarios", ex.ToString());
                 return StatusCode(500, "Ocurrió un error en el servidor");
             }
         }
@@ -85,16 +83,15 @@ namespace Ventas.Api.Controllers
         {
             try
             {
-                List<Sale> sales = await _saleRepository.GetByTotal();
-                List<SaleModel> salesModels = sales.ToSalesModels();
+                List<Sale> sales = await _userRepository.GetByTotal();
 
-                _logger.LogInformation("Ventas encontradas: ", salesModels);
-                return Ok(salesModels);
+                _logger.LogInformation("Ventas encontradas: ", sales);
+                return Ok(sales);
             }
             catch (Exception ex)
             {
 
-                _logger.LogError("Error obteniendo las ventas", ex.ToString());
+                _logger.LogError("Error obteniendo los usuarios", ex.ToString());
                 return StatusCode(500, "Ocurrió un error en el servidor");
             }
         }
@@ -104,30 +101,30 @@ namespace Ventas.Api.Controllers
         {
             try
             {
-                Sale sale = saleModel.ToSale();
-                Sale savedSale = await _saleRepository.Create(sale);
+                Sale sale = new Sale { numeroDocumento = saleModel.numeroDocumento, tipoPago = saleModel.tipoPago, total = saleModel.total };
+                Sale savedSale = await _userRepository.Create(sale);
                 _logger.LogInformation("Nueva venta guardada", savedSale);
 
-                return CreatedAtAction(nameof(GetById), new { id = sale.idVenta}, sale);
+                return CreatedAtAction(nameof(GetById), new { id = sale.idVenta }, sale);
             }
             catch (Exception ex)
             {
 
-                _logger.LogError("Error obteniendo las ventas", ex.ToString());
+                _logger.LogError("Error obteniendo los usuarios", ex.ToString());
                 return StatusCode(500, "Ocurrió un error en el servidor");
             }
 
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult>Update([FromRoute] int id, [FromBody] SaleModel saleModel)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] SaleModel saleModel)
         {
             try
             {
-                Sale sale = saleModel.ToSale();
-                Sale? updatedSale = await _saleRepository.Update(sale, id);
+                Sale sale = new Sale { numeroDocumento = saleModel.numeroDocumento, tipoPago = saleModel.tipoPago, total = saleModel.total };
+                Sale? updatedSale = await _userRepository.Update(sale, id);
 
-                if(updatedSale == null) return NotFound($"Venta no encontrada: Venta con el id {id} no existente.");
+                if (updatedSale == null) return NotFound($"Venta no encontrada: Venta con el id {id} no existente.");
 
                 _logger.LogInformation("Venta actualizada", updatedSale);
 
@@ -136,7 +133,7 @@ namespace Ventas.Api.Controllers
             catch (Exception ex)
             {
 
-                _logger.LogError("Error obteniendo las ventas", ex.ToString());
+                _logger.LogError("Error obteniendo los usuarios", ex.ToString());
                 return StatusCode(500, "Ocurrió un error en el servidor");
             }
 
@@ -147,9 +144,9 @@ namespace Ventas.Api.Controllers
         {
             try
             {
-                Sale? deletedSale = await _saleRepository.Delete(id);
-                
-                 if(deletedSale == null) return NotFound($"Venta no encontrada: Venta con el id {id} no existente.");
+                Sale? deletedSale = await _userRepository.Delete(id);
+
+                if (deletedSale == null) return NotFound($"Venta no encontrada: Venta con el id {id} no existente.");
 
                 _logger.LogInformation("Nueva venta guardada", deletedSale);
 
@@ -158,10 +155,10 @@ namespace Ventas.Api.Controllers
             catch (Exception ex)
             {
 
-                _logger.LogError("Error obteniendo las ventas", ex.ToString());
+                _logger.LogError("Error obteniendo los usuarios", ex.ToString());
                 return StatusCode(500, "Ocurrió un error en el servidor");
             }
 
-        }
+        }*/
     }
 }

@@ -1,6 +1,4 @@
 ﻿
-using Ventas.Domain.Entities;
-
 namespace Ventas.Infrastructure.Models
 {
 
@@ -11,21 +9,6 @@ namespace Ventas.Infrastructure.Models
             public string Correo { get; set; }
             public string RolNombre { get; set; }
             public DateTime FechaRegistro { get; set; }
-        }
-
-        public static class UserMapper
-    {
-        public static UserModel ToUserModel(this User user)
-        {
-            return new UserModel
-            {
-                NombreCompleto = user.nombreCompleto,
-                Correo = user.correo,
-                RolNombre = user.Role.nombre,
-                FechaRegistro = user.fechaRegistro
-            };
-        }
+            public bool? Eliminado { get; set; }
     }
-       
-
     }
