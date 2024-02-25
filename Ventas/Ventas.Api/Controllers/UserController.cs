@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Ventas.Domain.Entities;
+using Ventas.Infrastructure.Context;
 using Ventas.Infrastructure.Extensions;
 using Ventas.Infrastructure.Interfaces;
 using Ventas.Infrastructure.Models;
@@ -14,23 +15,26 @@ namespace Ventas.Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
-        private ILogger<IUserRepository> _logger;
+        private readonly ILogger<IUserRepository> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public UserController(IUserRepository userRepository, ILogger<IUserRepository> logger)
+        public UserController(IUserRepository userRepository, ILogger<IUserRepository> logger, ApplicationDbContext context)
         {
             _userRepository = userRepository;
             _logger = logger;
+            _context = context;
         }
 
-      /*  [HttpGet]
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                List<UserModel> sales = await _userRepository.GetEntities();
+                List<User> sales = await _userRepository.GetEntities();
+                List<UserModel> result = await sales.ToUserModelList(_context);
 
-                _logger.LogInformation("Ventas encontradas: ", sales);
-                return Ok(sales);
+                _logger.LogInformation("Ventas encontradas: ", result);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -39,7 +43,7 @@ namespace Ventas.Api.Controllers
                 return StatusCode(500, "Ocurrió un error en el servidor");
             }
         }
-      */
+      
         // GET: api/<ValuesController>
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
@@ -97,18 +101,18 @@ namespace Ventas.Api.Controllers
                 _logger.LogError("Error obteniendo los usuarios", ex.ToString());
                 return StatusCode(500, "Ocurrió un error en el servidor");
             }
-        }
+        }*/
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] SaleModel saleModel)
+        public async Task<IActionResult> Create([FromBody] UserInputModel userModel)
         {
             try
             {
-                Sale sale = new Sale { numeroDocumento = saleModel.numeroDocumento, tipoPago = saleModel.tipoPago, total = saleModel.total };
-                Sale savedSale = await _userRepository.Create(sale);
-                _logger.LogInformation("Nueva venta guardada", savedSale);
+                User user = userModel.FromInputToUser();
+                User savedUser = await _userRepository.Create(user);
+                _logger.LogInformation("Nuevo usuario guardado: ", savedUser);
 
-                return CreatedAtAction(nameof(GetById), new { id = sale.idVenta }, sale);
+                return CreatedAtAction(nameof(GetById), new { id = savedUser.idUsuario }, savedUser);
             }
             catch (Exception ex)
             {
@@ -119,6 +123,7 @@ namespace Ventas.Api.Controllers
 
         }
 
+        /*
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] SaleModel saleModel)
         {

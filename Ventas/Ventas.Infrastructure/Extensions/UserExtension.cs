@@ -33,17 +33,39 @@ namespace Ventas.Infrastructure.Extensions
             };
         }
 
-        public static List<UserModel> ToUserModelList(this List<User> users)
+
+        public static async Task<List<UserModel>> ToUserModelList(this List<User> users, ApplicationDbContext context)
         {
-            List<UserModel> list = users.Select(user => new UserModel
-            {
-                NombreCompleto = user.nombreCompleto,
-                Correo = user.correo,
-                RolNombre = user.Role.nombre,
-                FechaRegistro = user.fechaRegistro
-            }).ToList();
+            IEnumerable<Task<UserModel>> tasks = users.Select(async user => {
+                Role? rol = await context.Rol.FirstOrDefaultAsync(r => r.idRol == user.idRol);
+
+                return new UserModel
+                {
+                    NombreCompleto = user.nombreCompleto,
+                    Correo = user.correo,
+                    RolNombre = rol.nombre,
+                    FechaRegistro = user.fechaRegistro
+                };
+            });
+
+            UserModel[] results = await Task.WhenAll(tasks);
+            List<UserModel> list = results.ToList();
 
             return list;
+        }
+
+        public static User FromInputToUser(this UserInputModel input)
+        {
+            User user = new User
+            {
+                nombreCompleto = input.NombreCompleto,
+                correo = input.Correo,
+                idRol = input.idRol,
+                clave = input.clave,
+                esActivo = input.esActivo,
+            };
+
+            return user;
         }
 
     }
