@@ -2,10 +2,13 @@
 
 using System.Runtime.CompilerServices;
 using Ventas.Domain.Entities;
-using Ventas.Infrastructure.Models;
+using Ventas.Infrastructure.Models.Sales;
 
 namespace Ventas.Infrastructure.Extensions
 {
+    /// <summary>
+    /// Metodos de extension corrrespondientes a Sales o Ventas
+    /// </summary>
     public static  class SaleExtension
     {
         public static Sale ToSale(this SaleModel saleModel)

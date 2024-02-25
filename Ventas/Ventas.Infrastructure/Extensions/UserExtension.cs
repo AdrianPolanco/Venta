@@ -3,10 +3,13 @@
 using Microsoft.EntityFrameworkCore;
 using Ventas.Domain.Entities;
 using Ventas.Infrastructure.Context;
-using Ventas.Infrastructure.Models;
+using Ventas.Infrastructure.Models.Users;
 
 namespace Ventas.Infrastructure.Extensions
 {
+    /// <summary>
+    /// Metodos de extension correspondiente a User
+    /// </summary>
     public static class UserExtension
     {
         public static UserModel ToUserModel(this User user)
@@ -36,23 +39,19 @@ namespace Ventas.Infrastructure.Extensions
 
         public static async Task<List<UserModel>> ToUserModelList(this List<User> users, ApplicationDbContext context)
         {
-            IEnumerable<Task<UserModel>> tasks = users.Select(async user => {
-                Role? rol = await context.Rol.FirstOrDefaultAsync(r => r.idRol == user.idRol);
+            var roles = await context.Rol.ToDictionaryAsync(r => r.idRol, r => r.nombre);
 
-                return new UserModel
-                {
-                    NombreCompleto = user.nombreCompleto,
-                    Correo = user.correo,
-                    RolNombre = rol.nombre,
-                    FechaRegistro = user.fechaRegistro
-                };
-            });
-
-            UserModel[] results = await Task.WhenAll(tasks);
-            List<UserModel> list = results.ToList();
+            var list = users.Select(user => new UserModel
+            {
+                NombreCompleto = user.nombreCompleto,
+                Correo = user.correo,
+                RolNombre = roles.ContainsKey(user.idRol) ? roles[user.idRol] : null,
+                FechaRegistro = user.fechaRegistro
+            }).ToList();
 
             return list;
         }
+
 
         public static User FromInputToUser(this UserInputModel input)
         {

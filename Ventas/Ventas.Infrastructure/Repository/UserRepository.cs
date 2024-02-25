@@ -61,8 +61,9 @@ namespace Ventas.Infrastructure.Repository
 
                 deletedUser.FechaElimino = DateTime.Now;
                 deletedUser.Eliminado = true;
+                deletedUser.esActivo = false;
 
-                _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync();
 
                 return deletedUser;
             }

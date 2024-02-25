@@ -1,7 +1,6 @@
-﻿
-using Ventas.Domain.Entities;
+﻿using Ventas.Domain.Entities;
 
-namespace Ventas.Infrastructure.Models
+namespace Ventas.Infrastructure.Models.Sales
 {
     public class SaleModel
     {

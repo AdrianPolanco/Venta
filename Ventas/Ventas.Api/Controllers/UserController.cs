@@ -4,7 +4,7 @@ using Ventas.Domain.Entities;
 using Ventas.Infrastructure.Context;
 using Ventas.Infrastructure.Extensions;
 using Ventas.Infrastructure.Interfaces;
-using Ventas.Infrastructure.Models;
+using Ventas.Infrastructure.Models.Users;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -39,7 +39,7 @@ namespace Ventas.Api.Controllers
             catch (Exception ex)
             {
 
-                _logger.LogError("Error obteniendo los usuarios", ex.ToString());
+                _logger.LogError("Error obteniendo los usuarios: ", ex.ToString());
                 return StatusCode(500, "Ocurrió un error en el servidor");
             }
         }
@@ -62,52 +62,72 @@ namespace Ventas.Api.Controllers
             catch (Exception ex)
             {
 
-                _logger.LogError("Error obteniendo los usuarios", ex.ToString());
+                _logger.LogError("Error obteniendo los usuarios: ", ex.ToString());
                 return StatusCode(500, "Ocurrió un error en el servidor");
             }
         }
 
-        /*[HttpGet("/dates")]
+        [HttpGet("dates")]
         public async Task<IActionResult> GetByDate()
         {
             try
             {
-                List<Sale> sales = await _userRepository.GetByDate();
+                List<User> users = await _userRepository.GetByDate();
+                List<UserModel> result = await users.ToUserModelList(_context);
 
-                _logger.LogInformation("Ventas encontradas: ", sales);
-                return Ok(sales);
+                _logger.LogInformation("Usuarios agrupados por fecha: ", result);
+                return Ok(result);
             }
             catch (Exception ex)
             {
 
-                _logger.LogError("Error obteniendo los usuarios", ex.ToString());
+                _logger.LogError("Error obteniendo los usuarios: ", ex.ToString());
                 return StatusCode(500, "Ocurrió un error en el servidor");
             }
         }
 
-        [HttpGet("/totals")]
-        public async Task<IActionResult> GetByTotal()
+        [HttpGet("roles")]
+        public async Task<IActionResult> GetByRole()
         {
             try
             {
-                List<Sale> sales = await _userRepository.GetByTotal();
+                List<User> users = await _userRepository.GetByRole();
+                List<UserModel> result = await users.ToUserModelList(_context);
 
-                _logger.LogInformation("Ventas encontradas: ", sales);
-                return Ok(sales);
+                _logger.LogInformation("Usuarios agrupados por roles: ", result);
+                return Ok(result);
             }
             catch (Exception ex)
             {
 
-                _logger.LogError("Error obteniendo los usuarios", ex.ToString());
+                _logger.LogError("Error obteniendo los usuarios: ", ex.ToString());
                 return StatusCode(500, "Ocurrió un error en el servidor");
             }
-        }*/
+        }
+
+        [HttpGet("names")]
+        public async Task<IActionResult> GetByName()
+        {
+            try
+            {
+                List<User> users = await _userRepository.GetByName();
+                List<UserModel> result = await users.ToUserModelList(_context);
+                _logger.LogInformation("Usuarios agrupados por nombres: ", result);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error obteniendo los usuarios: ", ex.ToString());
+                throw;
+            }
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] UserInputModel userModel)
         {
             try
             {
+                if (userModel.Validate()) return BadRequest("Todas las propiedades deben tener valores válidos.");
                 User user = userModel.FromInputToUser();
                 User savedUser = await _userRepository.Create(user);
                 _logger.LogInformation("Nuevo usuario guardado: ", savedUser);
@@ -123,20 +143,21 @@ namespace Ventas.Api.Controllers
 
         }
 
-        /*
+       
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] SaleModel saleModel)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UserInputModel userModel)
         {
             try
             {
-                Sale sale = new Sale { numeroDocumento = saleModel.numeroDocumento, tipoPago = saleModel.tipoPago, total = saleModel.total };
-                Sale? updatedSale = await _userRepository.Update(sale, id);
+                if (userModel.Validate()) return BadRequest("Todas las propiedades deben tener valores válidos.");
+                User user = userModel.FromInputToUser();
+                User? updatedUser = await _userRepository.Update(user, id);
 
-                if (updatedSale == null) return NotFound($"Venta no encontrada: Venta con el id {id} no existente.");
+                if (updatedUser == null) return NotFound($"Usuario no encontrado: Usuario con el id {id} no existente.");
 
-                _logger.LogInformation("Venta actualizada", updatedSale);
+                _logger.LogInformation("Usuario actualizado: ", updatedUser);
 
-                return Ok(updatedSale);
+                return Ok(updatedUser);
             }
             catch (Exception ex)
             {
@@ -146,17 +167,17 @@ namespace Ventas.Api.Controllers
             }
 
         }
-
+ 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             try
             {
-                Sale? deletedSale = await _userRepository.Delete(id);
+                User? deletedUser = await _userRepository.Delete(id);
 
-                if (deletedSale == null) return NotFound($"Venta no encontrada: Venta con el id {id} no existente.");
+                if (deletedUser == null) return NotFound($"Usuario no encontrado: Usuario con el id {id} no existente.");
 
-                _logger.LogInformation("Nueva venta guardada", deletedSale);
+                _logger.LogInformation("Usuario eliminado: ", deletedUser);
 
                 return NoContent();
             }
@@ -167,6 +188,6 @@ namespace Ventas.Api.Controllers
                 return StatusCode(500, "Ocurrió un error en el servidor");
             }
 
-        }*/
+        }
     }
 }

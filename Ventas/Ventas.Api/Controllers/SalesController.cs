@@ -2,7 +2,7 @@
 using Ventas.Domain.Entities;
 using Ventas.Infrastructure.Extensions;
 using Ventas.Infrastructure.Interfaces;
-using Ventas.Infrastructure.Models;
+using Ventas.Infrastructure.Models.Sales;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -129,7 +129,7 @@ namespace Ventas.Api.Controllers
 
                 if(updatedSale == null) return NotFound($"Venta no encontrada: Venta con el id {id} no existente.");
 
-                _logger.LogInformation("Venta actualizada", updatedSale);
+                _logger.LogInformation("Venta actualizada con exito: ", updatedSale);
 
                 return Ok(updatedSale);
             }
@@ -151,7 +151,7 @@ namespace Ventas.Api.Controllers
                 
                  if(deletedSale == null) return NotFound($"Venta no encontrada: Venta con el id {id} no existente.");
 
-                _logger.LogInformation("Nueva venta guardada", deletedSale);
+                _logger.LogInformation("Venta eliminada con exito: ", deletedSale);
 
                 return NoContent();
             }
