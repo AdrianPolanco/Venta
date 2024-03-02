@@ -1,9 +1,10 @@
 ﻿
-using Ventas.Domain.Repositories;
+using Ventas.Domain.Repository;
 
 namespace Ventas.Infrastructure.Core
 {
-    internal class BaseRepository<TEntity>: IBaseRepository<TEntity> where TEntity: class
+    public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class    
     {
+
     }
 }

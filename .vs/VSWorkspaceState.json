@@ -1,10 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Ventas.Api",
-    "\\Ventas.Infrastructure",
-    "\\Ventas.IoC",
-    "\\Ventas.Web"
+    "\\Ventas",
+    "\\Ventas\\Ventas.Infrastructure",
+    "\\Ventas\\Ventas.Infrastructure\\Extentions"
   ],
+  "SelectedNode": "\\Ventas\\Ventas.Infrastructure\\Extentions\\CategoriaExtention.cs",
   "PreviewInSolutionExplorer": false
 }
