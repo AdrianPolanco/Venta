@@ -14,29 +14,84 @@ namespace Ventas.Infrastructure.Repositoy
         }
         public void Create(Menu menu)
         {
-            this.context.Menu.Add(menu);
+
+            try
+            {
+
+                this.context.Menu.Add(menu);
+                this.context.SaveChanges();
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+
+            }
+
+
+            
         }
 
         public List<Menu> Getmenu()
         {
 
-            //me quede aqui
-            throw new NotImplementedException();
+          
+            return this.context.Menu.ToList();
         }
 
-        public Menu GetMenu(int IdMenu)
+        public Menu? GetMenu(int IdMenu)
         {
-            throw new NotImplementedException();
+            return this.context.Menu.Find(IdMenu);
         }
 
         public void Remove(Menu menu)
         {
-            throw new NotImplementedException();
+
+            try
+            {
+
+                var menuToRemove = this.GetMenu(menu.IdMenu);
+
+
+
+                this.context.Menu.Update(menu);
+                this.context.SaveChanges();
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+
+            }
+           
+           
+
+            //this.context.Menu.Remove(menu);
         }
 
         public void Update(Menu menu)
         {
-            throw new NotImplementedException();
+
+
+            try
+            {
+
+                var menuToUpdate = this.GetMenu(menu.IdMenu);
+
+
+                this.context.Menu.Update(menu);
+                this.context.SaveChanges();
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+
+            }
+       
         }
     }
 }

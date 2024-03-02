@@ -7,11 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Exceptions\**" />
     <Compile Remove="Repositories\**" />
-    <EmbeddedResource Remove="Exceptions\**" />
     <EmbeddedResource Remove="Repositories\**" />
-    <None Remove="Exceptions\**" />
     <None Remove="Repositories\**" />
   </ItemGroup>
 

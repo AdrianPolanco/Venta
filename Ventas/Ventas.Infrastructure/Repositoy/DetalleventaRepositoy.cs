@@ -8,34 +8,88 @@ namespace Ventas.Infrastructure.Repositoy
 {
     public class DetalleventaRepositoy : IDetalleVentaRepository
     {
-
+        private readonly VentaContext context;
         public DetalleventaRepositoy(VentaContext context)
         {
-            
+            this.context = context;
         }
         public void Create(Detalleventa detalleventa)
         {
-            throw new NotImplementedException();
+
+            try
+            {
+
+                this.context.DetalleVenta.Add(detalleventa);
+                this.context.SaveChanges();
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+
+            }
+           
         }
 
         public List<Detalleventa> GetDetalleventa()
         {
-            throw new NotImplementedException();
+            return this.context.DetalleVenta.ToList();
         }
 
-        public Detalleventa GetDetalleventa(int idDetalleVenta)
+        public Detalleventa? GetDetalleventa(int idDetalleVenta)
         {
-            throw new NotImplementedException();
+            return this.context.DetalleVenta.Find(idDetalleVenta);
         }
 
+
+        //aqui
         public void Remove(Detalleventa detalleventa)
         {
-            throw new NotImplementedException();
+
+
+            try
+            {
+
+                var detalleventaToRemove = this.GetDetalleventa(detalleventa.idDetalleVenta);
+
+
+                this.context.DetalleVenta.Update(detalleventa);
+                this.context.SaveChanges();
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+
+            }
+
+           
         }
 
+        //aqui
         public void Update(Detalleventa detalleventa)
         {
-            throw new NotImplementedException();
+
+
+
+            try
+            {
+                var detalleventaToRemove = this.GetDetalleventa(detalleventa.idDetalleVenta);
+
+
+                this.context.DetalleVenta.Update(detalleventa);
+                this.context.SaveChanges();
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+
+            }
+           
         }
     }
 }
