@@ -2,9 +2,9 @@
 
 namespace Ventas.Domain.Entities : 
 {
-    public class Rol : BaseEntityA
+    public class Rol : BaseEntity
     {
-        public string? nombre { get; set; }
+       
         public DateTime? fechaRegistro { get; set; }
     }
 }
