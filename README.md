@@ -34,7 +34,7 @@ El sexto endpoint es una ruta GET, para obtener las ventas ordenadas por fecha:
 El septimo y ultimo endpoint de este controlador es otra ruta GET, para obtener las ventas por su monto total: 
 ![get_totals](https://github.com/Abnerdotel/Venta/assets/116674818/4437fd7b-d746-4a03-a976-f4e6556c5213)
 
-***Controlador de Usuario (UserController)
+***Controlador de Usuario (UserController)***
 
 En este controlador tengo ocho endpoints relacionados a la tabla Usuario:
 
