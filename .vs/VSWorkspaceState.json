@@ -2,14 +2,14 @@
   "ExpandedNodes": [
     "",
     "\\Ventas",
-    "\\Ventas\\Ventas.Domain\\Core",
-    "\\Ventas\\Ventas.Domain\\Entities",
-    "\\Ventas\\Ventas.Domain\\Repository",
+    "\\Ventas\\Ventas.Api",
     "\\Ventas\\Ventas.Infrastructure",
     "\\Ventas\\Ventas.Infrastructure\\Core",
     "\\Ventas\\Ventas.Infrastructure\\Extensions",
-    "\\Ventas\\Ventas.Infrastructure\\Interfaces"
+    "\\Ventas\\Ventas.Infrastructure\\Interfaces",
+    "\\Ventas\\Ventas.Infrastructure\\Models",
+    "\\Ventas\\Ventas.Infrastructure\\Models\\Users"
   ],
-  "SelectedNode": "\\Ventas\\Ventas.Infrastructure\\Core\\BaseRepository.cs",
+  "SelectedNode": "\\Ventas\\Ventas.Infrastructure\\Models\\Users\\UserModel.cs",
   "PreviewInSolutionExplorer": false
 }

@@ -6,7 +6,7 @@ namespace Ventas.Infrastructure.Interfaces
 {
     public interface ISaleRepository: IBaseRepository<Sale>
     {
-        Task<List<Sale>> GetByDate();
-        Task<List<Sale>> GetByTotal();
+        Task<List<Sale>> GetByDate(bool isDescending);
+        Task<List<Sale>> GetByTotal(bool isDescending);
     }
 }

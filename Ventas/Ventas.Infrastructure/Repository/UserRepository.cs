@@ -59,6 +59,8 @@ namespace Ventas.Infrastructure.Repository
 
                 User deletedUser = await base.GetEntity(id);
 
+                if (deletedUser.Eliminado is not null) return null;
+
                 deletedUser.FechaElimino = DateTime.Now;
                 deletedUser.Eliminado = true;
                 deletedUser.esActivo = false;
@@ -73,6 +75,22 @@ namespace Ventas.Infrastructure.Repository
                 throw;
             }
 
+        }
+
+        public override async Task<List<User?>> GetEntities()
+        {
+            try
+            {
+                IQueryable<User> usersQuery = _dbSet.Where(u => u.Eliminado != true);
+                List<User?> users = await usersQuery.ToListAsync();
+
+                return users;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
         /// <summary>
@@ -91,11 +109,22 @@ namespace Ventas.Infrastructure.Repository
             return foundUser;
         }
 
-        public async Task<List<User>> GetByName()
+        public async Task<List<User>> GetByName(bool isDescending)
         {
             try
             {
-                List<User> users = await _dbContext.Usuario.OrderBy(u => u.nombreCompleto).ToListAsync();
+
+                List<User> users;
+
+                if(!isDescending)
+                {
+                    users = await _dbContext.Usuario.OrderBy(u => u.nombreCompleto).ToListAsync();
+                }
+                else
+                {
+                    users = users = await _dbContext.Usuario.OrderByDescending(u => u.nombreCompleto).ToListAsync();
+                }
+
                 return users;
             }
             catch (Exception)
@@ -106,11 +135,21 @@ namespace Ventas.Infrastructure.Repository
 
         }
 
-        public async Task<List<User>> GetByRole()
+        public async Task<List<User>> GetByRole(bool isDescending)
         {
             try
             {
-                List<User> users = await _dbContext.Usuario.OrderBy(u => u.idRol).ToListAsync();
+                List<User> users;
+
+                if (!isDescending)
+                {
+                    users = await _dbContext.Usuario.OrderBy(u => u.idRol).ToListAsync();
+                }
+                else
+                {
+                    users = users = await _dbContext.Usuario.OrderByDescending(u => u.idRol).ToListAsync();
+                }
+
                 return users;
             }
             catch (Exception)
@@ -120,11 +159,21 @@ namespace Ventas.Infrastructure.Repository
             }
         }
 
-        public async Task<List<User>> GetByDate()
+        public async Task<List<User>> GetByDate(bool isDescending)
         {
             try
             {
-                List<User> users = await _dbContext.Usuario.OrderBy(u => u.fechaRegistro).ToListAsync();
+                List<User> users;
+
+                if (!isDescending)
+                {
+                    users = await _dbContext.Usuario.OrderBy(u => u.fechaRegistro).ToListAsync();
+                }
+                else
+                {
+                    users = users = await _dbContext.Usuario.OrderByDescending(u => u.fechaRegistro).ToListAsync();
+                }
+
                 return users;
             }
             catch (Exception)

@@ -6,8 +6,8 @@ namespace Ventas.Infrastructure.Interfaces
 {
     public interface IUserRepository: IBaseRepository<User>
     {
-        Task<List<User>> GetByName();
-        Task<List<User>> GetByRole();
-        Task<List<User>> GetByDate();
+        Task<List<User>> GetByName(bool isDescending);
+        Task<List<User>> GetByRole(bool isDescending);
+        Task<List<User>> GetByDate(bool isDescending);
     }
 }

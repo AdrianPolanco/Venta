@@ -93,11 +93,20 @@ namespace Ventas.Infrastructure.Repository
         /// Obteniendo ventas por fecha de registro
         /// </summary>
         /// <returns>Ventas en orden de fecha de registro</returns>
-        public async Task<List<Sale>> GetByDate()
+        public async Task<List<Sale>> GetByDate(bool isDescending)
         {
             try
             {
-                List<Sale> sales = await _dbContext.Venta.OrderBy(v => v.fechaRegistro).ToListAsync();
+                List<Sale> sales;
+                if (!isDescending)
+                {
+                    sales = await _dbContext.Venta.OrderBy(v => v.fechaRegistro).ToListAsync();
+                }
+                else
+                {
+                    sales = await _dbContext.Venta.OrderByDescending(v => v.fechaRegistro).ToListAsync();
+                }
+              
                 return sales;
             }
             catch (Exception)
@@ -112,11 +121,20 @@ namespace Ventas.Infrastructure.Repository
         /// Obteniendo ventas por total
         /// </summary>
         /// <returns>Ventas en orden de monto total</returns>
-        public async Task<List<Sale>> GetByTotal()
+        public async Task<List<Sale>> GetByTotal(bool isDescending)
         {
             try
             {
-                List<Sale> sales = await _dbContext.Venta.OrderBy(v => v.total).ToListAsync();
+                List<Sale> sales;
+                if (!isDescending)
+                {
+                    sales = await _dbContext.Venta.OrderBy(v => v.total).ToListAsync();
+                }
+                else
+                {
+                    sales = await _dbContext.Venta.OrderByDescending(v => v.total).ToListAsync();
+                }
+
                 return sales;
             }
             catch (Exception)
