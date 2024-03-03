@@ -2,20 +2,39 @@
 using System.Linq;
 using Ventas.Domain.Entities;
 using Ventas.Infrastructure.Context;
+using Ventas.Infrastructure.Core;
+using Ventas.Infrastructure.Exceptions;
 using Ventas.Infrastructure.Interfaces;
 
 namespace Ventas.Infrastructure.Repository
 {
-  
-    public class DocumentNumberRepository : IDocumentNumberRepository
+
+    public class DocumentNumberRepository : BaseRepository<DocumentNumber >, IDocumentNumberRepository
     {
 
-        private readonly ApplicationDbContext _context;
-
-        public DocumentNumberRepository(ApplicationDbContext context)
+        
+        public DocumentNumberRepository(ApplicationDbContext context) : base(context) 
         {
-            _context = context;
+            
         }
+
+        public override void update(DocumentNumber entity)
+        {
+            base.update(entity);
+        }
+
+        override 
+
+
+
+
+
+
+
+
+
+
+
         /// <summary>
         /// Creando una venta en la BD
         /// </summary>
@@ -23,11 +42,25 @@ namespace Ventas.Infrastructure.Repository
         /// <returns>Venta creada</returns>
 
 
-        public async Task<DocumentNumber> Create (DocumentNumber documentNumber)
+        public async Task<DocumentNumber> Create(DocumentNumber documentNumber)
         {
-            await _context.NumeroDocumento.AddAsync(documentNumber);
-            await _context.SaveChangesAsync();
-            return documentNumber;
+
+
+            try
+            {
+                if (documentNumber == null) 
+                    throw new DocumentNumberException ("El numero de documento se encuentra regitrado ");
+                        
+                await context.NumeroDocumento.AddAsync(documentNumber);
+                await context.SaveChangesAsync();
+                return documentNumber;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            
         }
 
         /// <summary>
@@ -37,11 +70,11 @@ namespace Ventas.Infrastructure.Repository
         /// <returns>Venta borrada</returns>
         public async Task<DocumentNumber?> Delete(DocumentNumber documentNumber)
         {
-            bool documentNumberExists = _context.NumeroDocumento.Any<DocumentNumber>(d => d.idNumeroDocumento == documentNumber.idNumeroDocumento);
+            bool documentNumberExists = context.NumeroDocumento.Any<DocumentNumber>(d => d.idNumeroDocumento == documentNumber.idNumeroDocumento);
             if (!documentNumberExists) return null;
 
-            _context.NumeroDocumento.Remove(documentNumber);
-            await _context.SaveChangesAsync();
+            context.NumeroDocumento.Remove(documentNumber);
+            await context.SaveChangesAsync();
             return documentNumber;
         }
 
@@ -52,10 +85,10 @@ namespace Ventas.Infrastructure.Repository
         /// <returns>NumeroDocumento coincidente con el id</returns>
         public async Task<DocumentNumber?> GetNumeroDocumento(int id)
         {
-            bool documentNumberExists = _context.NumeroDocumento.Any<DocumentNumber>(d => d.idNumeroDocumento == id);
+            bool documentNumberExists = context.NumeroDocumento.Any<DocumentNumber>(d => d.idNumeroDocumento == id);
             if (!documentNumberExists) return null;
 
-            DocumentNumber foundDocumentNumber = await _context.NumeroDocumento.FindAsync(id);
+            DocumentNumber foundDocumentNumber = await context.NumeroDocumento.FindAsync(id);
 
             return foundDocumentNumber;
         }
@@ -66,7 +99,7 @@ namespace Ventas.Infrastructure.Repository
         /// <returns>Todas los NumeroDocumentos</returns>
         public async Task<List<DocumentNumber>> GetNumeroDocumentos()
         {
-            List<DocumentNumber> documentNumbers = await _context.NumeroDocumento.ToListAsync();
+            List<DocumentNumber> documentNumbers = await context.NumeroDocumento.ToListAsync();
             return documentNumbers;
         }
 
@@ -79,19 +112,19 @@ namespace Ventas.Infrastructure.Repository
         /// 
         public async Task<DocumentNumber?> Update(DocumentNumber numeroDocumento, int currentNumeroDocumentoId)
         {
-            bool documentNumberExists = _context.NumeroDocumento.Any<DocumentNumber>(d => d.idNumeroDocumento == currentNumeroDocumentoId);
+            bool documentNumberExists = context.NumeroDocumento.Any<DocumentNumber>(d => d.idNumeroDocumento == currentNumeroDocumentoId);
             if (!documentNumberExists) return null;
 
-            DocumentNumber foundDocumentNumber = await _context.NumeroDocumento.FindAsync(currentNumeroDocumentoId);
+            DocumentNumber foundDocumentNumber = await context.NumeroDocumento.FindAsync(currentNumeroDocumentoId);
 
             foundDocumentNumber.idNumeroDocumento = numeroDocumento.idNumeroDocumento;
             foundDocumentNumber.ultimo_Numero = numeroDocumento.ultimo_Numero;
             foundDocumentNumber.FechaMod = numeroDocumento.FechaMod;
             foundDocumentNumber.FechaElimino = numeroDocumento.FechaElimino;
             foundDocumentNumber.fechaRegistro = numeroDocumento.fechaRegistro;
-     
-            
-            await _context.SaveChangesAsync();
+
+
+            await context.SaveChangesAsync();
 
             return foundDocumentNumber;
         }

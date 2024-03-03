@@ -1,13 +1,16 @@
 ﻿using Ventas.Domain.Entities;
+using Ventas.Domain.Repositories;
+using Ventas.Infrastructure.Models;
 namespace Ventas.Infrastructure.Interfaces
 {
-    public interface IProductRepository
+    public interface IProductRepository : IBaseRepository<Product>
     {
-        Task<Product> Create(Product Producto);
-        Task<Product?> Update(Product Producto, int currentProductoId);
-        Task<Product?> Delete(Product Producto);
 
-        Task<List<Product>> GetProductos();
-        Task<Product?> GetProducto(int id);
+        
+        List<ProductModel> GetProductsByCategory(int categoryId);
+        List<ProductModel> GetProductsBySupplier(int supplierId);
+
+
+
     }
 }
