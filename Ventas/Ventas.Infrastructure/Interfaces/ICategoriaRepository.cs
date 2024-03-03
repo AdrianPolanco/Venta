@@ -1,17 +1,14 @@
-﻿    
-using Ventas.Domain.Entities.Categoria;
+﻿
+using Ventas.Domain.Entities;
 using Ventas.Domain.Repository;
+using Ventas.Infrastructure.Models;
 
 namespace Ventas.Infrastructure.Interfaces
 {
-    public interface ICategoriaRepository
-    {
-        void Create(Categoria categoria);
-        void Update(Categoria categoria);
-        void Remove (Categoria categoria);
+    public interface ICategoriaRepository : IBaseRepository<Categoria>
+    { 
         
-        List<Categoria> GetCategorias();
-        Categoria GetCategoria(int categoriaId);
+      //List<CategoriaModels> GetsCategoryForUser (int categoriaId);
 
     }
 }
