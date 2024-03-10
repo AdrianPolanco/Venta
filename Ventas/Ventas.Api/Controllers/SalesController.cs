@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Ventas.Domain.Entities;
 using Ventas.Infrastructure.Interfaces;
-using Ventas.Api.Models.Sales;
-using Ventas.Api.Extensions.Models;
-using Ventas.Api.Dtos.Sales;
-using Ventas.Api.Extensions.Dtos;
+using Ventas.Application.Models.Sales;
+using Ventas.Application.Extensions.Models;
+using Ventas.Application.Dtos.Sales;
+using Ventas.Application.Extensions.Dtos;
 using Ventas.Infrastructure.ObjectQueries;
+using Ventas.Application.Contracts;
 
 namespace Ventas.Api.Controllers
 {
@@ -13,16 +14,17 @@ namespace Ventas.Api.Controllers
     [ApiController]
     public class SalesController : ControllerBase
     {
-        private readonly ISaleRepository _saleRepository;
         private ILoggerService<ISaleRepository> _logger;
+        private ISaleService _saleService;
 
-        public SalesController(ISaleRepository saleRepository, ILoggerService<ISaleRepository> logger)
+        public SalesController(ILoggerService<ISaleRepository> logger, ISaleService saleService)
         {
-            _saleRepository = saleRepository;
             _logger = logger;
+            _saleService = saleService;
+
         }
 
-        [HttpGet]
+        /*[HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
@@ -40,17 +42,13 @@ namespace Ventas.Api.Controllers
                 return StatusCode(500, "Ocurrió un error en el servidor");
             }
         }
-
+        */
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             try
             {
-                Sale? sale = await _saleRepository.GetEntity(id);
-
-                if (sale == null) return NotFound($"Venta no encontrada: Venta con el id {id} no existente.");
-
-                SaleGetModel saleModel = sale.ToGetSaleModel();
+                SaleGetModel saleModel = await _saleService.GetSaleById(id);
 
                 _logger.LogInformation("Venta encontrada: ", saleModel);
                 return Ok(saleModel);
@@ -63,7 +61,7 @@ namespace Ventas.Api.Controllers
             }
         }
 
-        [HttpGet("/dates")]
+        /*[HttpGet("/dates")]
         public async Task<IActionResult> GetByDate([FromQuery] SortQuery query)
         {
             try
@@ -99,31 +97,28 @@ namespace Ventas.Api.Controllers
                 _logger.LogError("Error obteniendo las ventas", ex);
                 return StatusCode(500, "Ocurrió un error en el servidor");
             }
-        }
+        }*/
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] SaleCreateDto saleDto)
         {
             try
             {
-                Sale sale = saleDto.ToSale();
-                Sale savedSale = await _saleRepository.Create(sale);
+                SaleCreateModel savedSale = await _saleService.CreateSale(saleDto);
                 _logger.LogInformation("Nueva venta guardada", savedSale);
 
-                SaleCreateModel createdSaleModel = savedSale.ToCreateSaleModel();
-
-                return CreatedAtAction(nameof(GetById), new { id = savedSale.idVenta}, createdSaleModel);
+                return CreatedAtAction(nameof(GetById), new { id = savedSale.Id}, savedSale);
             }
             catch (Exception ex)
             {
 
                 _logger.LogError("Error obteniendo las ventas", ex);
-                return StatusCode(500, "Ocurrió un error en el servidor");
+                return StatusCode(500, $"Ocurrió un error en el servidor: {ex.Message}");
             }
 
         }
 
-        [HttpPut]
+        /*[HttpPut]
         public async Task<IActionResult>Update([FromBody] SaleUpdateDto saleDto)
         {
             try
@@ -168,6 +163,6 @@ namespace Ventas.Api.Controllers
                 return StatusCode(500, "Ocurrió un error en el servidor");
             }
 
-        }
+        }*/
     }
 }

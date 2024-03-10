@@ -1,15 +1,16 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
+using Ventas.Application.Contracts;
 using Ventas.Domain.Entities;
 using Ventas.Infrastructure.Context;
 using Ventas.Infrastructure.Core;
-using Ventas.Infrastructure.Interfaces;
+
 
 namespace Ventas.Infrastructure.Repository
 {
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        public UserRepository(ApplicationDbContext context): base(context) { }
+        public UserRepository(ApplicationDbContext context) : base(context) { }
 
         /// <summary>
         /// Actualizando el usuario, en caso de que exista
@@ -116,7 +117,7 @@ namespace Ventas.Infrastructure.Repository
 
                 List<User> users;
 
-                if(!isDescending)
+                if (!isDescending)
                 {
                     users = await _dbContext.Usuario.OrderBy(u => u.nombreCompleto).ToListAsync();
                 }

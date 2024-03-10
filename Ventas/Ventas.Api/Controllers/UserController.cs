@@ -2,15 +2,15 @@
 using Ventas.Domain.Entities;
 using Ventas.Infrastructure.Context;
 using Ventas.Infrastructure.Interfaces;
-using Ventas.Api.Models.Users;
-using Ventas.Api.Extensions.Models;
-using Ventas.Api.Dtos.Users;
-using Ventas.Api.Extensions.Dtos;
+using Ventas.Application.Models.Users;
+using Ventas.Application.Dtos.Users;
+using Ventas.Application.Extensions.Dtos;
 using Ventas.Infrastructure.ObjectQueries;
+using Ventas.Api.Extensions.Models;
 
 namespace Ventas.Api.Controllers
 {
-    [Route("api/users")]
+   /* [Route("api/users")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -30,8 +30,8 @@ namespace Ventas.Api.Controllers
         {
             try
             {
-                List<User> sales = await _userRepository.GetEntities();
-                List<UserGetModel> result = await sales.ToGetUserModelList(_context);
+                List<User> users = await _userRepository.GetEntities();
+                List<UserGetModel> result = users.ToGetUserModelList();
 
                 _logger.LogInformation($"Usuarios encontrados: ", result);
                 return Ok(result);
@@ -72,7 +72,7 @@ namespace Ventas.Api.Controllers
             try
             {
                 List<User> users = await _userRepository.GetByDate(query.IsDescending);
-                List<UserGetModel> result = await users.ToGetUserModelList(_context);
+                List<UserGetModel> result = users.ToGetUserModelList();
 
                 _logger.LogInformation("Usuarios agrupados por fecha: ", result);
                 return Ok(result);
@@ -91,7 +91,7 @@ namespace Ventas.Api.Controllers
             try
             {
                 List<User> users = await _userRepository.GetByRole(query.IsDescending);
-                List<UserGetModel> result = await users.ToGetUserModelList(_context);
+                List<UserGetModel> result =  users.ToGetUserModelList();
 
                 _logger.LogInformation("Usuarios agrupados por roles: ", result);
                 return Ok(result);
@@ -110,7 +110,7 @@ namespace Ventas.Api.Controllers
             try
             {
                 List<User> users = await _userRepository.GetByName(query.IsDescending);
-                List<UserGetModel> result = await users.ToGetUserModelList(_context);
+                List<UserGetModel> result = users.ToGetUserModelList();
                 _logger.LogInformation("Usuarios agrupados por nombres: ", result);
                 return Ok(result);
             }
@@ -131,7 +131,7 @@ namespace Ventas.Api.Controllers
                 User savedUser = await _userRepository.Create(user);
                 _logger.LogInformation("Nuevo usuario guardado: ", savedUser);
 
-                UserCreateModel userModel = await savedUser.ToCreateUserModel(_context);
+                UserCreateModel userModel = savedUser.ToCreateUserModel();
 
                 return CreatedAtAction(nameof(GetById), new { id = savedUser.idUsuario }, userModel);
             }
@@ -158,7 +158,7 @@ namespace Ventas.Api.Controllers
 
                 _logger.LogInformation("Usuario actualizado: ", updatedUser);
 
-                UserUpdateModel userUpdateModel = await updatedUser.ToUpdateUserModel(_context);
+                UserUpdateModel userUpdateModel = updatedUser.ToUpdateUserModel();
 
                 return Ok(userUpdateModel);
             }
@@ -180,7 +180,7 @@ namespace Ventas.Api.Controllers
 
                 if (deletedUser == null) return NotFound($"Usuario no encontrado o ya eliminado: Usuario con el id {id} no existe o ya ha sido eliminado.");
 
-                UserDeleteModel userDeleteModel = await deletedUser.ToDeleteUserModel(_context);
+                UserDeleteModel userDeleteModel = deletedUser.ToDeleteUserModel();
 
                 _logger.LogInformation("Usuario eliminado: ", userDeleteModel);
 
@@ -194,5 +194,5 @@ namespace Ventas.Api.Controllers
             }
 
         }
-    }
+    }*/
 }

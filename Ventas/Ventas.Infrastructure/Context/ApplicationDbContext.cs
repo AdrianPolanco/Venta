@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Ventas.Domain.Entities;
 
+
 namespace Ventas.Infrastructure.Context
 {
     /// <summary>
@@ -11,7 +12,7 @@ namespace Ventas.Infrastructure.Context
 
         public ApplicationDbContext(DbContextOptions options): base(options) { }
 
-         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
         }

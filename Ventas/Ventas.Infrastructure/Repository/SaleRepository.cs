@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Ventas.Application.Contracts;
 using Ventas.Domain.Entities;
 using Ventas.Infrastructure.Context;
 using Ventas.Infrastructure.Core;
-using Ventas.Infrastructure.Interfaces;
 
 namespace Ventas.Infrastructure.Repository
 {
-    public class SaleRepository: BaseRepository<Sale>, ISaleRepository
+    public class SaleRepository : BaseRepository<Sale>, ISaleRepository
     {
-        public SaleRepository(ApplicationDbContext context): base(context){ }
+        public SaleRepository(ApplicationDbContext context) : base(context) { }
 
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Ventas.Infrastructure.Repository
 
                 throw;
             }
-            
+
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace Ventas.Infrastructure.Repository
 
                 throw;
             }
-          
+
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Ventas.Infrastructure.Repository
 
                 throw;
             }
-         
+
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace Ventas.Infrastructure.Repository
                 {
                     sales = await _dbContext.Venta.OrderByDescending(v => v.fechaRegistro).ToListAsync();
                 }
-              
+
                 return sales;
             }
             catch (Exception)
@@ -145,4 +145,3 @@ namespace Ventas.Infrastructure.Repository
         }
     }
 }
-
