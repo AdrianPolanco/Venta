@@ -6,7 +6,7 @@ namespace Ventas.Infrastructure.Interfaces
     {
         void LogInformation(string message, object obj);
         void LogWarning(string message, object obj);
-        void LogError(string message, Exception exception);
-        void LogCritical(string message, Exception exception);
+        void LogError(string message, object obj);
+        void LogCritical(string message, object obj);
     }
 }

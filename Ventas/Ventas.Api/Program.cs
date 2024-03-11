@@ -2,9 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using Ventas.Infrastructure.Context;
 using Ventas.Infrastructure.Interfaces;
 using Ventas.Infrastructure.Logger;
-using Ventas.Application.Contracts;
 using Ventas.Infrastructure.Repository;
 using Ventas.Application.Services;
+using Ventas.Application.Contracts.Repositories;
+using Ventas.Application.Contracts.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

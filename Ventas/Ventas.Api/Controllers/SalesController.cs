@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Ventas.Domain.Entities;
 using Ventas.Infrastructure.Interfaces;
-using Ventas.Application.Models.Sales;
-using Ventas.Application.Extensions.Models;
 using Ventas.Application.Dtos.Sales;
-using Ventas.Application.Extensions.Dtos;
 using Ventas.Infrastructure.ObjectQueries;
-using Ventas.Application.Contracts;
+using Ventas.Application.Core;
+using Ventas.Application.Messages;
+using Ventas.Application.Contracts.Repositories;
+using Ventas.Application.Contracts.Services;
 
 namespace Ventas.Api.Controllers
 {
@@ -24,145 +23,133 @@ namespace Ventas.Api.Controllers
 
         }
 
-        /*[HttpGet]
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            try
-            {
-                List<Sale> sales = await _saleRepository.GetEntities();
-                List<SaleGetModel> salesModels = sales.ToGetSalesModels();
+                ServiceResult result = await _saleService.GetAllSales();
 
-                _logger.LogInformation("Ventas encontradas: ", salesModels);
-                return Ok(salesModels);
-            }
-            catch (Exception ex)
-            {
+                if (!result.Success)
+                {
+                    _logger.LogError($"Error al buscar ventas: ", result);
+                    return StatusCode(500, result);
+                }
 
-                _logger.LogError("Error obteniendo las ventas", ex);
-                return StatusCode(500, "Ocurrió un error en el servidor");
-            }
+                _logger.LogInformation("Ventas encontradas: ", result);
+                return Ok(result);
         }
-        */
+
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            try
-            {
-                SaleGetModel saleModel = await _saleService.GetSaleById(id);
 
-                _logger.LogInformation("Venta encontrada: ", saleModel);
-                return Ok(saleModel);
-            }
-            catch (Exception ex)
-            {
+                ServiceResult result = await _saleService.GetSaleById(id);
+                if (!result.Success && result.Message.Equals(StatusMessages.GET_NOTFOUND))
+                {
+                    _logger.LogError("Venta no encontrada: ", result);
+                    return NotFound(result);
+                }
 
-                _logger.LogError("Error obteniendo las ventas", ex);
-                return StatusCode(500, "Ocurrió un error en el servidor");
-            }
+                if (!result.Success && !result.Message.Equals(StatusMessages.GET_NOTFOUND)) {
+                    _logger.LogError($"Ocurrio en error en el servidor al buscar venta {id}: ", result);
+                    return StatusCode(500, result);
+                } 
+                _logger.LogInformation($"Venta encontrada con el id {id}: ", result);
+                return Ok(result);
+
         }
 
-        /*[HttpGet("/dates")]
+        [HttpGet("dates")]
         public async Task<IActionResult> GetByDate([FromQuery] SortQuery query)
         {
-            try
-            {
-                List<Sale> sales = await _saleRepository.GetByDate(query.IsDescending);
-                List<SaleGetModel> salesModels = sales.ToGetSalesModels();
+                ServiceResult result = await _saleService.GetByDate(query.IsDescending);
 
-                _logger.LogInformation("Ventas encontradas: ", salesModels);
-                return Ok(salesModels);
-            }
-            catch (Exception ex)
+            if (!result.Success)
             {
-
-                _logger.LogError("Error obteniendo las ventas", ex);
-                return StatusCode(500, "Ocurrió un error en el servidor");
+                _logger.LogError($"Ocurrio en error en el servidor al buscar las ventas: ", result);
+                return StatusCode(500, result);
             }
+
+            _logger.LogInformation("Ventas encontradas y ordenadas por fecha: ", result);
+                return Ok(result);
         }
 
-        [HttpGet("/totals")]
+        [HttpGet("totals")]
         public async Task<IActionResult> GetByTotal([FromQuery] SortQuery query)
         {
-            try
-            {
-                List<Sale> sales = await _saleRepository.GetByTotal(query.IsDescending);
-                List<SaleGetModel> salesModels = sales.ToGetSalesModels();
 
-                _logger.LogInformation("Ventas encontradas: ", salesModels);
-                return Ok(salesModels);
-            }
-            catch (Exception ex)
-            {
+                ServiceResult result = await _saleService.GetByTotal(query.IsDescending); ;
 
-                _logger.LogError("Error obteniendo las ventas", ex);
-                return StatusCode(500, "Ocurrió un error en el servidor");
-            }
-        }*/
+                if (!result.Success)
+                {
+                    _logger.LogError($"Ocurrio en error en el servidor al buscar las ventas: ", result);
+                    return StatusCode(500, result);
+                }
+
+                _logger.LogInformation("Ventas encontradas y ordenadas por total: ", result);
+                return Ok(result);
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] SaleCreateDto saleDto)
         {
-            try
+            ServiceResult result = await _saleService.CreateSale(saleDto);
+            if (!result.Success && result.Message.Equals(StatusMessages.POST_INVALID))
             {
-                SaleCreateModel savedSale = await _saleService.CreateSale(saleDto);
-                _logger.LogInformation("Nueva venta guardada", savedSale);
-
-                return CreatedAtAction(nameof(GetById), new { id = savedSale.Id}, savedSale);
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError("Error obteniendo las ventas", ex);
-                return StatusCode(500, $"Ocurrió un error en el servidor: {ex.Message}");
+                _logger.LogError("Venta no creada por campos inválidos: ", result);
+                return BadRequest(result);
             }
 
+            if (!result.Success && !result.Message.Equals(StatusMessages.POST_FAILURE))
+            {
+                _logger.LogError($"Ocurrio en error en el servidor al crear la venta: ", result);
+                return StatusCode(500, result);
+            }
+            _logger.LogInformation($"Venta creada con exito: ", result);
+            return Ok(result);
         }
 
-        /*[HttpPut]
+       [HttpPut]
         public async Task<IActionResult>Update([FromBody] SaleUpdateDto saleDto)
         {
-            try
+            ServiceResult result = await _saleService.UpdateSale(saleDto);
+            if (!result.Success && result.Message.Equals(StatusMessages.PUT_INVALID))
             {
-                Sale sale = saleDto.ToSale();
-                Sale? updatedSale = await _saleRepository.Update(sale, saleDto.Id);
-
-                if(updatedSale == null) return NotFound($"Venta no encontrada: Venta con el id {saleDto.Id} no existente.");
-
-                SaleUpdateModel saleUpdateModel = updatedSale.ToUpdateSaleModel();
-
-                _logger.LogInformation("Venta actualizada con exito: ", saleUpdateModel);
-
-                return Ok(saleUpdateModel);
+                _logger.LogError("Venta no creada por campos inválidos o por ser inexistente: ", result);
+                return BadRequest(result);
             }
-            catch (Exception ex)
+
+            if (!result.Success && !result.Message.Equals(StatusMessages.PUT_FAILURE))
             {
-
-                _logger.LogError("Error obteniendo las ventas", ex);
-                return StatusCode(500, "Ocurrió un error en el servidor");
+                _logger.LogError($"Ocurrio en error en el servidor al crear la venta: ", result);
+                return StatusCode(500, result);
             }
+            _logger.LogInformation($"Venta creada con exito: ", result);
+            return Ok(result);
 
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            try
-            {
-                Sale? deletedSale = await _saleRepository.Delete(id);
-                
-                 if(deletedSale == null) return NotFound($"Venta no encontrada: Venta con el id {id} no existente.");
 
-                _logger.LogInformation("Venta eliminada con exito: ", deletedSale);
+                ServiceResult result = await _saleService.DeleteSale(id);
 
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
+                if (!result.Success && result.Message.Equals(StatusMessages.DELETE_NOTFOUND))
+                {
+                    _logger.LogError("Venta a eliminar no encontrada: ", result);
+                    return NotFound(result);
+                }
 
-                _logger.LogError("Error obteniendo las ventas", ex);
-                return StatusCode(500, "Ocurrió un error en el servidor");
-            }
+                if (!result.Success && !result.Message.Equals(StatusMessages.DELETE_FAILURE))
+                {
+                    _logger.LogError($"Ocurrio en error en el servidor al intentar eliminar la venta {id}: ", result);
+                    return StatusCode(500, result);
+                }
 
-        }*/
+                _logger.LogInformation("Venta eliminada con exito: ", result);
+
+                return Ok(result);
+
+        }
     }
 }

@@ -12,24 +12,24 @@ namespace Ventas.Infrastructure.Logger
         }
 
 
-        public void LogCritical(string message, Exception exception)
+        public void LogCritical(string message, object obj)
         {
-            _logger.LogCritical(message, exception, "Hola");
+            _logger.LogCritical(message, obj.ToString());
         }
 
-        public void LogError(string message, Exception exception)
+        public void LogError(string message, object obj)
         {
-            _logger?.LogError(message, exception);
+            _logger?.LogError(message, obj.ToString());
         }
 
         public void LogInformation(string message, object obj)
         {
-            _logger.LogInformation(message, obj);
+            _logger.LogInformation(message, obj.ToString());
         }
 
         public void LogWarning(string message, object obj)
         {
-            _logger.LogWarning(message, obj);
+            _logger.LogWarning(message, obj.ToString());
         }
     }
 }
