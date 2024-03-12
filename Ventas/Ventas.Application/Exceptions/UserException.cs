@@ -1,10 +1,10 @@
 ﻿
 
-namespace Ventas.Infrastructure.Exceptions
+namespace Ventas.Application.Exceptions
 {
-    public class UserException: Exception
+    internal class UserException: Exception
     {
-        public UserException(string message): base(message)
+        internal UserException(string message): base(message)
         {
             
         }

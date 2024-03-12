@@ -6,11 +6,11 @@ namespace Ventas.Application.Contracts.Services
 {
     public interface ISaleService : IBaseService
     {
-        Task<ServiceResult> GetAllSales();
-        Task<ServiceResult> GetSaleById(int id);
-        Task<ServiceResult> CreateSale(SaleCreateDto sale);
-        Task<ServiceResult> UpdateSale(SaleUpdateDto sale);
-        Task<ServiceResult> DeleteSale(int id);
+        Task<ServiceResult> GetAll();
+        Task<ServiceResult> GetById(int id);
+        Task<ServiceResult> Create(SaleCreateDto sale);
+        Task<ServiceResult> Update(SaleUpdateDto sale);
+        Task<ServiceResult> Delete(int id);
         Task<ServiceResult> GetByDate(bool isDescending);
         Task<ServiceResult> GetByTotal(bool isDescending);
     }

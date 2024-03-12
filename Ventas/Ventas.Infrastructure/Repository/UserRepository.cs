@@ -27,6 +27,8 @@ namespace Ventas.Infrastructure.Repository
 
                 User foundUser = await _dbContext.Usuario.FindAsync(currentUserId);
 
+                if(foundUser.Eliminado == true) return null;
+
                 foundUser.nombreCompleto = user.nombreCompleto;
                 foundUser.correo = user.correo;
                 foundUser.idRol = user.idRol;

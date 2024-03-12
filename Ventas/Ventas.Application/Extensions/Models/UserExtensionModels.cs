@@ -22,7 +22,8 @@ namespace Ventas.Api.Extensions.Models
                 fechaRegistro = user.fechaRegistro,
                 esActivo = user.esActivo,
                 FechaElimino = user.FechaElimino,
-                FechaMod = user.FechaMod
+                FechaMod = user.FechaMod,
+                Eliminado = (bool)user.Eliminado,
             };
         }
 
@@ -75,7 +76,7 @@ namespace Ventas.Api.Extensions.Models
 
             var list = users.Select( user => new UserGetModel
                 {
-                    Id = user.idRol,
+                    Id = user.idUsuario,
                     NombreCompleto = user.nombreCompleto,
                     Correo = user.correo,
                     idRol = user.idRol,

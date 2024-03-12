@@ -1,8 +1,5 @@
-﻿
-
-using System.Reflection;
+﻿using System.Reflection;
 using Ventas.Application.Contracts.Factories;
-using Ventas.Infrastructure.Exceptions;
 
 namespace Ventas.Application.Core
 {

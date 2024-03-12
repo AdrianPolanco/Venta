@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Ventas.Infrastructure.Interfaces;
 using Ventas.Application.Dtos.Sales;
 using Ventas.Infrastructure.ObjectQueries;
 using Ventas.Application.Core;
 using Ventas.Application.Messages;
 using Ventas.Application.Contracts.Repositories;
 using Ventas.Application.Contracts.Services;
+using Ventas.Infrastructure.Interfaces;
 
 namespace Ventas.Api.Controllers
 {
@@ -26,7 +26,7 @@ namespace Ventas.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-                ServiceResult result = await _saleService.GetAllSales();
+                ServiceResult result = await _saleService.GetAll();
 
                 if (!result.Success)
                 {
@@ -42,7 +42,7 @@ namespace Ventas.Api.Controllers
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
 
-                ServiceResult result = await _saleService.GetSaleById(id);
+                ServiceResult result = await _saleService.GetById(id);
                 if (!result.Success && result.Message.Equals(StatusMessages.GET_NOTFOUND))
                 {
                     _logger.LogError("Venta no encontrada: ", result);
@@ -61,7 +61,7 @@ namespace Ventas.Api.Controllers
         [HttpGet("dates")]
         public async Task<IActionResult> GetByDate([FromQuery] SortQuery query)
         {
-                ServiceResult result = await _saleService.GetByDate(query.IsDescending);
+            ServiceResult result = await _saleService.GetByDate(query.IsDescending);
 
             if (!result.Success)
             {
@@ -92,16 +92,16 @@ namespace Ventas.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] SaleCreateDto saleDto)
         {
-            ServiceResult result = await _saleService.CreateSale(saleDto);
+            ServiceResult result = await _saleService.Create(saleDto);
             if (!result.Success && result.Message.Equals(StatusMessages.POST_INVALID))
             {
                 _logger.LogError("Venta no creada por campos inválidos: ", result);
                 return BadRequest(result);
             }
 
-            if (!result.Success && !result.Message.Equals(StatusMessages.POST_FAILURE))
+            if (!result.Success && result.Message.Equals(StatusMessages.POST_FAILURE))
             {
-                _logger.LogError($"Ocurrio en error en el servidor al crear la venta: ", result);
+                _logger.LogError($"Ocurrio en error en el servidor al intentar crear la venta: ", result);
                 return StatusCode(500, result);
             }
             _logger.LogInformation($"Venta creada con exito: ", result);
@@ -111,10 +111,10 @@ namespace Ventas.Api.Controllers
        [HttpPut]
         public async Task<IActionResult>Update([FromBody] SaleUpdateDto saleDto)
         {
-            ServiceResult result = await _saleService.UpdateSale(saleDto);
+            ServiceResult result = await _saleService.Update(saleDto);
             if (!result.Success && result.Message.Equals(StatusMessages.PUT_INVALID))
             {
-                _logger.LogError("Venta no creada por campos inválidos o por ser inexistente: ", result);
+                _logger.LogError("Venta no actualizada por campos inválidos o por ser inexistente: ", result);
                 return BadRequest(result);
             }
 
@@ -125,14 +125,12 @@ namespace Ventas.Api.Controllers
             }
             _logger.LogInformation($"Venta creada con exito: ", result);
             return Ok(result);
-
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-
-                ServiceResult result = await _saleService.DeleteSale(id);
+                ServiceResult result = await _saleService.Delete(id);
 
                 if (!result.Success && result.Message.Equals(StatusMessages.DELETE_NOTFOUND))
                 {
@@ -149,7 +147,6 @@ namespace Ventas.Api.Controllers
                 _logger.LogInformation("Venta eliminada con exito: ", result);
 
                 return Ok(result);
-
         }
     }
 }

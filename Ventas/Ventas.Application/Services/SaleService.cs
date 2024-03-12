@@ -23,7 +23,7 @@ namespace Ventas.Application.Services
             _exceptionFactory = new SaleExceptionFactory();
         }
 
-        public async Task<ServiceResult> CreateSale(SaleCreateDto saleDto)
+        public async Task<ServiceResult> Create(SaleCreateDto saleDto)
         {
             Dictionary<string, int> validations = new Dictionary<string, int>() {
                 {"numeroDocumento", 40 },
@@ -33,7 +33,7 @@ namespace Ventas.Application.Services
             ServiceResult result = new();
             try
             {
-               bool validationPassed = this.ValidateFields(saleDto, validations, _exceptionFactory);
+               this.ValidateFields(saleDto, validations, _exceptionFactory);
 
                
                Sale sale = saleDto.ToSale();
@@ -45,12 +45,16 @@ namespace Ventas.Application.Services
             catch(SaleException ex)
             {
                 result = this.SetResult(result, false, StatusMessages.POST_INVALID, ex.Message);
-            } 
-            
-               return result;       
+            }
+            catch (Exception ex)
+            {
+                result = this.SetResult(result, false, StatusMessages.POST_FAILURE, ex.Message);
+            }
+
+            return result;       
         }
 
-        public async Task<ServiceResult> DeleteSale(int id)
+        public async Task<ServiceResult> Delete(int id)
         {
             ServiceResult result = new();
             try
@@ -59,7 +63,7 @@ namespace Ventas.Application.Services
 
                 if (sale == null)
                 {
-                    result = this.SetResult(result, false, StatusMessages.DELETE_NOTFOUND, sale);
+                    result = this.SetResult(result, false, StatusMessages.DELETE_NOTFOUND);
                     return result;
                 };
 
@@ -73,7 +77,7 @@ namespace Ventas.Application.Services
             return result;
         }
 
-        public async Task<ServiceResult> GetAllSales()
+        public async Task<ServiceResult> GetAll()
         {
             ServiceResult result = new();
             try
@@ -128,7 +132,7 @@ namespace Ventas.Application.Services
                 return result;
             }
 
-        public async Task<ServiceResult> GetSaleById(int id)
+        public async Task<ServiceResult> GetById(int id)
         {
                 ServiceResult result = new();
                 try
@@ -153,7 +157,7 @@ namespace Ventas.Application.Services
         }
                 
           
-        public async Task<ServiceResult> UpdateSale(SaleUpdateDto saleDto)
+        public async Task<ServiceResult> Update(SaleUpdateDto saleDto)
         {
             Dictionary<string, int> validations = new Dictionary<string, int>() {
                 {"numeroDocumento", 40 },
@@ -179,10 +183,13 @@ namespace Ventas.Application.Services
                 SaleGetModel saleModel = sale.ToGetSaleModel();
                 result = this.SetResult(result, true, StatusMessages.PUT_SUCCESS, saleModel);
 
+            }catch(SaleException ex)
+            {
+                result = this.SetResult(result, true, StatusMessages.PUT_INVALID, ex.Message);
             }
             catch (Exception ex)
             {
-                result = this.SetResult(result, false, StatusMessages.PUT_INVALID, ex.Message);
+                result = this.SetResult(result, false, StatusMessages.PUT_FAILURE, ex.Message);
             }
             return result;
         }
