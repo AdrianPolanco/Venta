@@ -6,7 +6,6 @@ using Ventas.Application.Extensions.Models;
 using Ventas.Application.Models.Sales;
 using Ventas.Domain.Entities;
 using Ventas.Application.Messages;
-using Ventas.Application.Models.Base;
 using Ventas.Application.Contracts.Repositories;
 using Ventas.Application.Contracts.Services;
 using Ventas.Application.Contracts.Factories;
@@ -14,7 +13,7 @@ using Ventas.Application.Exceptions.Factories;
 
 namespace Ventas.Application.Services
 {
-    public class SaleService: BaseService, ISaleService
+    public class SaleService: BaseService, ISaleService<SaleCreateDto, SaleUpdateDto>
     {
         private ISaleRepository _saleRepository;
         private IExceptionFactory _exceptionFactory;

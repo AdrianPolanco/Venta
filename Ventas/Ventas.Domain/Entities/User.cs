@@ -1,5 +1,4 @@
-﻿
-using Ventas.Domain.Core;
+﻿using Ventas.Domain.Core;
 
 namespace Ventas.Domain.Entities
 {

@@ -21,8 +21,7 @@ namespace Ventas.Application.Core
             {
                 if (validations.ContainsKey(p.Name))
                 {
-                    if (validations[p.Name] < p.GetValue(dto).ToString().Length) throw exceptionFactory.CreateException($"La cantidad máxima de caracteres permitidos fue excedida en {p.Name}");
-                    
+                    if (validations[p.Name] < p.GetValue(dto).ToString().Length) throw exceptionFactory.CreateException($"La cantidad máxima de caracteres permitidos fue excedida en {p.Name}");         
                 }
                 return false;
             });

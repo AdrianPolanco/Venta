@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Ventas.Domain.Entities;
-using Ventas.Infrastructure.Context;
 using Ventas.Infrastructure.Interfaces;
 using Ventas.Application.Dtos.Users;
 using Ventas.Infrastructure.ObjectQueries;
@@ -15,10 +13,10 @@ namespace Ventas.Api.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IUserService<UserCreateDto, UserUpdateDto> _userService;
         private readonly ILoggerService<IUserRepository> _logger;
 
-        public UserController(IUserService userService, ILoggerService<IUserRepository> logger)
+        public UserController(IUserService<UserCreateDto, UserUpdateDto> userService, ILoggerService<IUserRepository> logger)
         {
             _userService = userService;
             _logger = logger;

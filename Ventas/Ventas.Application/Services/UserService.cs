@@ -7,15 +7,13 @@ using Ventas.Application.Dtos.Users;
 using Ventas.Application.Exceptions;
 using Ventas.Application.Exceptions.Factories;
 using Ventas.Application.Extensions.Dtos;
-using Ventas.Application.Extensions.Models;
 using Ventas.Application.Messages;
-using Ventas.Application.Models.Sales;
 using Ventas.Application.Models.Users;
 using Ventas.Domain.Entities;
 
 namespace Ventas.Application.Services
 {
-    public class UserService : BaseService, IUserService
+    public class UserService : BaseService, IUserService<UserCreateDto, UserUpdateDto>
     {
         private readonly IUserRepository _userRepository;
         private readonly IExceptionFactory _exceptionFactory;

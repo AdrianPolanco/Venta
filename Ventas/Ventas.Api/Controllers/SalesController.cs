@@ -14,9 +14,9 @@ namespace Ventas.Api.Controllers
     public class SalesController : ControllerBase
     {
         private ILoggerService<ISaleRepository> _logger;
-        private ISaleService _saleService;
+        private ISaleService<SaleCreateDto, SaleUpdateDto> _saleService;
 
-        public SalesController(ILoggerService<ISaleRepository> logger, ISaleService saleService)
+        public SalesController(ILoggerService<ISaleRepository> logger, ISaleService<SaleCreateDto, SaleUpdateDto> saleService)
         {
             _logger = logger;
             _saleService = saleService;

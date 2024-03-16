@@ -1,6 +1,4 @@
 ﻿
-using Ventas.Domain.Entities;
-
 namespace Ventas.Domain.Core
 {
     /// <summary>

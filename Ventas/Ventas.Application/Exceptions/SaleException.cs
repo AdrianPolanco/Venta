@@ -4,7 +4,7 @@ namespace Ventas.Application.Exceptions
 {
     public class SaleException: Exception
     {
-        internal SaleException(string message): base(message)
+        public SaleException(string message): base($"Error en ventas: $¡{message}")
         {
             
         }

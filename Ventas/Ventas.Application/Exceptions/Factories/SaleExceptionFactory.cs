@@ -1,6 +1,4 @@
-﻿
-
-using Ventas.Application.Contracts.Factories;
+﻿using Ventas.Application.Contracts.Factories;
 
 namespace Ventas.Application.Exceptions.Factories
 {

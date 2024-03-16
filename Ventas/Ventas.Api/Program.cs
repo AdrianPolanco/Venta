@@ -1,21 +1,17 @@
 using Microsoft.EntityFrameworkCore;
-using Ventas.Infrastructure.Context;
-using Ventas.Infrastructure.Interfaces;
-using Ventas.Infrastructure.Logger;
-using Ventas.Infrastructure.Repository;
-using Ventas.Application.Services;
-using Ventas.Application.Contracts.Repositories;
-using Ventas.Application.Contracts.Services;
+using Ventas.IoC.DatabaseDependecy;
+using Ventas.IoC.LoggerDependency;
+using Ventas.IoC.SalesDependency;
+using Ventas.IoC.UserDependency;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Ventas")));
-builder.Services.AddScoped(typeof(ILoggerService<>), typeof(LoggerService<>));
-builder.Services.AddScoped<ISaleRepository, SaleRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<ISaleService, SaleService>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddDatabase(builder.Configuration.GetConnectionString("Ventas"));
+builder.Services.AddLoggerDependency();
+builder.Services.AddSalesDependencies();
+builder.Services.AddUserDependency();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
