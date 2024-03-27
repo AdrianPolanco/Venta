@@ -3,6 +3,6 @@
     public record UserGetModel : UserUpdateModel
     {
         public DateTime? FechaElimino { get; set; }
-        public bool Eliminado { get; set; }
+        public bool? Eliminado { get; set; }
     }
 }

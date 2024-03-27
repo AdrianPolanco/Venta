@@ -81,8 +81,10 @@ namespace Ventas.Api.Extensions.Models
                     Correo = user.correo,
                     idRol = user.idRol,
                     fechaRegistro = user.fechaRegistro,
+                    esActivo = user.esActivo,
                     FechaMod = user.FechaMod,
                     FechaElimino = user.FechaElimino,
+                    Eliminado = user.Eliminado is not null? user.Eliminado: null
                 }
             ).ToList();
 

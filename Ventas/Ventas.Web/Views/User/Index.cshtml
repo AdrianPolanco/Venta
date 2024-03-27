@@ -1,0 +1,70 @@
+﻿@using Ventas.Web.Models.Responses;
+@model List<Ventas.Web.Models.Responses.UserGetResponse>;
+@{
+    ViewData["Title"] = "User Home Page";
+    Layout = "_Layout_User";
+}
+<div class="col-3">
+<select class="form-select form-select-sm" aria-label="Small select example">
+    <option selected disabled>Filtrar por...</option>
+    <option value="date">Fecha</option>
+    <option value="role">Rol</option>
+    <option value="name">Nombre</option>
+</select>
+</div>
+
+<table class="table caption-top">
+    <caption>List of users</caption>
+    <thead class="bg-info text-light">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Correo</th>
+            <th scope="col">Rol</th>
+            <th scope="col">Actividad</th>
+            <th scope="col">Creado</th>
+            <th scope="col">Modificación</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(UserGetResponse userResponse in Model)
+        {
+            @if(userResponse.Eliminado is null){
+            <tr>
+            <th scope="row">@userResponse.Id</th>
+            <td>@userResponse.NombreCompleto</td>
+            <td>@userResponse.Correo</td>
+                @if (userResponse.idRol == 1)
+                {
+                    <td>Administrador</td>
+                }
+
+                else if (userResponse.idRol == 2)
+                {
+                    <td>Empleado</td>
+                }
+                else
+                {
+                    <td>Supervisor</td>
+                }
+                @if (userResponse.esActivo)
+                {
+                    <td><span class="badge bg-success text-light">Activo</span></td>
+                }
+                else
+                {
+                    <td><span class="badge bg-danger text-light">Inactivo</span></td>
+                }
+            <td>@userResponse.fechaRegistro</td>
+                @if(userResponse.FechaMod is not null)
+                {
+                    <td>@userResponse.FechaMod</td>
+                }
+                else
+                {
+                    <td>-</td>
+                }
+        </tr>}          
+            }   
+    </tbody>
+</table>
