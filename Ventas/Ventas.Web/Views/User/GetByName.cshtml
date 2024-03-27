@@ -1,0 +1,96 @@
+﻿@using Ventas.Web.Models.Requests;
+@using Ventas.Web.Models.Responses;
+@model List<Ventas.Web.Models.Responses.UserGetResponse>;
+@{
+    ViewData["Title"] = "User Home Page";
+    Layout = "_Layout_User";
+}
+
+<div class="col-3">
+    <form method="get" asp-controller="User" asp-action="Filter">
+        <select name="filterOption" class="form-select form-select-sm" onchange="this.form.submit()">
+            <option value="">Filtrar por...</option>
+            <option value="date">Fecha</option>
+            <option value="role">Rol</option>
+            <option value="name" disabled>Nombre</option>
+        </select>
+    </form>
+</div>
+<table class="table caption-top">
+    <caption>List of users</caption>
+    <thead class="bg-info text-light">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Correo</th>
+            <th scope="col">Rol</th>
+            <th scope="col">Actividad</th>
+            <th scope="col">Creado</th>
+            <th scope="col">Modificación</th>
+            <th scope="col">Editar</th>
+            <th scope="col">Eliminar</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (UserGetResponse userResponse in Model)
+        {
+            <tr>
+                <th scope="row">@userResponse.Id</th>
+                <td>@userResponse.NombreCompleto</td>
+                <td>@userResponse.Correo</td>
+                @if (userResponse.idRol == 1)
+                {
+                    <td>Administrador</td>
+                }
+
+                else if (userResponse.idRol == 2)
+                {
+                    <td>Empleado</td>
+                }
+                else
+                {
+                    <td>Supervisor</td>
+                }
+                @if (userResponse.esActivo)
+                {
+                    <td><span class="badge bg-success text-light">Activo</span></td>
+                }
+                else
+                {
+                    <td><span class="badge bg-danger text-light">Inactivo</span></td>
+                }
+                <td>@userResponse.fechaRegistro</td>
+                @if (userResponse.FechaMod is not null)
+                {
+                    <td>@userResponse.FechaMod</td>
+                }
+                else
+                {
+                    <td>-</td>
+                }
+                <td>
+                    <form method="post" asp-controller="User" asp-action="Update">
+                        <input type="hidden" name="id" value="@userResponse.Id" />
+                        <input type="hidden" name="name" value="@userResponse.NombreCompleto" />
+                        <input type="hidden" name="email" value="@userResponse.Correo" />
+                        <input type="hidden" name="idRol" value="@userResponse.idRol" />
+                        <input type="hidden" name="esActivo" value="@userResponse.esActivo" />
+                        <input type="hidden" name="clave" value="@userResponse.Clave" />
+                        <button type="submit" class="btn btn-outline-warning">Editar</button>
+                    </form>
+                </td>
+
+                <td>
+                    <form method="post" asp-controller="User" asp-action="DeleteUser">
+                        <input type="hidden" name="id" value="@userResponse.Id" />
+                        <button type="submit" class="btn btn-outline-danger">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+
+
+        }
+    </tbody>
+</table>
+

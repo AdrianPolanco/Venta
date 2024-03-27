@@ -1,0 +1,54 @@
+﻿@using Ventas.Web.Models.Requests;
+@using Ventas.Web.Models.Responses;
+@model List<Ventas.Web.Models.Responses.SaleGetResponse>;
+@{
+    ViewData["Title"] = "Sales Home Page";
+    Layout = "_Layout_Sales";
+}
+
+<table class="table caption-top">
+    <caption>List of sales</caption>
+    <thead class="bg-success text-light">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Documento</th>
+            <th scope="col">Tipo de Pago</th>
+            <th scope="col">Total</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Editar</th>
+            <th scope="col">Eliminar</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (SaleGetResponse saleResponse in Model)
+        {
+            <tr>
+                <th scope="row">@saleResponse.Id</th>
+                <td>@saleResponse.numeroDocumento</td>
+                <td>@saleResponse.tipoPago</td>
+                <td>@saleResponse.total</td>
+                <td>@saleResponse.fechaRegistro</td>
+                <td>
+                    <form method="post" asp-controller="Sales" asp-action="Update">
+                        <input type="hidden" name="id" value="@saleResponse.Id" />
+                        <input type="hidden" name="numeroDocumento" value="@saleResponse.numeroDocumento" />
+                        <input type="hidden" name="pago" value="@saleResponse.tipoPago" />
+                        <input type="hidden" name="total" value="@saleResponse.total" />
+                        <input type="hidden" name="fechaRegistro" value="@saleResponse.fechaRegistro" />
+                        <button type="submit" class="btn btn-outline-warning">Editar</button>
+                    </form>
+                </td>
+
+                <td>
+                    <form method="post" asp-controller="Sales" asp-action="DeleteSale">
+                        <input type="hidden" name="id" value="@saleResponse.Id" />
+                        <button type="submit" class="btn btn-outline-danger">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+
+
+        }
+    </tbody>
+</table>

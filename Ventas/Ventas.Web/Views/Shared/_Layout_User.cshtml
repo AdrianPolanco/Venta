@@ -9,11 +9,10 @@
             <div class="navbar-nav">
                 <a class="nav-link active" asp-controller="User" asp-action="Index">Consultas</a>
                 <a class="nav-link" asp-controller="User" asp-action="Create">Crear</a>
-                <a class="nav-link">Actualizar</a>
             </div>
         </div>
     </div>
 </nav>
-<div class="container justify-content-center align-items-center">
+<div class="container d-flex flex-column justify-content-center align-items-center">
     @RenderBody()
 </div>

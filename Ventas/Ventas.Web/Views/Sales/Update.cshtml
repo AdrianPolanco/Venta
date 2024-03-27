@@ -1,0 +1,47 @@
+﻿@model Ventas.Web.Models.Requests.SaleUpdateRequest;
+@{
+    Layout = "_Layout_Sales";
+}
+
+
+<div class="col-4 mt-5">
+    <form class="row g-3 needs-validation d-flex flex-column align-items-center" novalidate action="http://localhost:5205/api/sales" method="post">
+        <div class="mb-3 row">
+            <label class="col-sm-2 col-form-label">Id</label>
+            <div class="col-sm-10">
+                <input type="text" asp-for="Id" readonly class="form-control-plaintext" value=@Model.Id>
+            </div>
+        </div>
+        <div class="input-group">
+            <span class="input-group-text bg-success text-white">Numero de Documento</span>
+            <input type="text" asp-for="numeroDocumento" class="form-control rounded-3"  required>
+            <div class="invalid-feedback">
+                Escribe un numero de documento válido.
+            </div>
+        </div>
+        <div class="input-group">
+            <span class="input-group-text bg-success text-white">Tipo de Pago</span>
+            <input type="text" asp-for="tipoPago" class="form-control rounded-3" required>
+            <div class="invalid-feedback">
+                Escribe un tipo de pago válido.
+            </div>
+        </div>
+        <div class="input-group">
+            <span class="input-group-text bg-success text-white">Total</span>
+            <input type="text" asp-for="total" class="form-control rounded-3" required>
+            <div class="invalid-feedback">
+                Escribe un total válido
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label class="col-sm-2 col-form-label">Id</label>
+            <div class="col-sm-10">
+                <input type="text" asp-for="fechaRegistro" readonly class="form-control-plaintext" id="updateSaleDate" value=@Model.fechaRegistro>
+            </div>
+        </div>
+
+        <div class="col-4">
+            <button type="submit" class="btn btn-success col-12 rounded-3 text-white" asp-controller="Sales" asp-action="UpdateSale">Actualizar venta</button>
+        </div>
+    </form>
+</div>

@@ -118,16 +118,12 @@ namespace Ventas.Infrastructure.Repository
             {
 
                 List<User> users;
+                IQueryable<User> query = _dbSet.Where(u => u.Eliminado == null);
 
-                if (!isDescending)
-                {
-                    users = await _dbContext.Usuario.OrderBy(u => u.nombreCompleto).ToListAsync();
-                }
-                else
-                {
-                    users = users = await _dbContext.Usuario.OrderByDescending(u => u.nombreCompleto).ToListAsync();
-                }
-
+                if (isDescending is false) query = query.OrderBy(u => u.nombreCompleto);  
+                else query = query.OrderByDescending(u => u.nombreCompleto);
+                
+                users = await query.ToListAsync();
                 return users;
             }
             catch (Exception)
@@ -143,16 +139,12 @@ namespace Ventas.Infrastructure.Repository
             try
             {
                 List<User> users;
+                IQueryable<User> query = _dbSet.Where(u => u.Eliminado == null);
 
-                if (!isDescending)
-                {
-                    users = await _dbContext.Usuario.OrderBy(u => u.idRol).ToListAsync();
-                }
-                else
-                {
-                    users = users = await _dbContext.Usuario.OrderByDescending(u => u.idRol).ToListAsync();
-                }
+                if (isDescending is false) query = query.OrderBy(u => u.idRol);
+                else query = query.OrderByDescending(u => u.idRol);
 
+                users = await query.ToListAsync();
                 return users;
             }
             catch (Exception)
@@ -167,16 +159,12 @@ namespace Ventas.Infrastructure.Repository
             try
             {
                 List<User> users;
+                IQueryable<User> query = _dbSet.Where(u => u.Eliminado == null);
 
-                if (!isDescending)
-                {
-                    users = await _dbContext.Usuario.OrderBy(u => u.fechaRegistro).ToListAsync();
-                }
-                else
-                {
-                    users = users = await _dbContext.Usuario.OrderByDescending(u => u.fechaRegistro).ToListAsync();
-                }
+                if (isDescending is false) query = query.OrderBy(u => u.fechaRegistro);
+                else query = query.OrderByDescending(u => u.fechaRegistro);
 
+                users = await query.ToListAsync();
                 return users;
             }
             catch (Exception)

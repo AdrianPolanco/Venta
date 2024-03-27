@@ -1,0 +1,17 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse d-flex align-items-center justify-content-center" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-link active text-success" asp-controller="Sales" asp-action="Index">Consultas</a>
+                <a class="nav-link text-success" asp-controller="Sales" asp-action="Create">Crear</a>
+            </div>
+        </div>
+    </div>
+</nav>
+<div class="container d-flex flex-column justify-content-center align-items-center">
+    @RenderBody()
+</div>
