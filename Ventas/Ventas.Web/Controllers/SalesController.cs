@@ -1,43 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.Net;
-using System.Text;
 using Ventas.Web.Models.Requests;
 using Ventas.Web.Models.Responses;
+using Ventas.Web.Services.Abstractions;
 
 namespace Ventas.Web.Controllers
 {
     public class SalesController : Controller
     {
-        private readonly ILogger<SalesController> _logger;
-        private HttpClientHandler _httpClientHandler = new HttpClientHandler();
+        private readonly IHttpService _httpService;
 
-        public SalesController(ILogger<SalesController> logger)
+        public SalesController(IHttpService httpService)
         {
-            _logger = logger;
-            _httpClientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyError) => { return true; };
+            _httpService = httpService;
         }
         public async Task<IActionResult> Index()
         {
-            using (var httpClient = new HttpClient(_httpClientHandler))
-            {
-                using (var response = await httpClient.GetAsync("http://localhost:5205/api/sales"))
-                {
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        string apiResponse = await response.Content.ReadAsStringAsync();
-                        ResponseResult<List<SaleGetResponse>> rawResult = JsonConvert.DeserializeObject<ResponseResult<List<SaleGetResponse>>>(apiResponse);
+            List<SaleGetResponse> users = await _httpService.Get<SaleGetResponse>("http://localhost:5205/api/sales");
+            if (users is not null) return View(users);
 
-                        if (rawResult.Success && rawResult.Result is not null)
-                        {
-                            List<SaleGetResponse> users = rawResult.Result.Select(e => e).ToList();
-                            return View(users);
-
-                        }
-                    }
-                }
-            }
-            return View();
+            ModelState.AddModelError(string.Empty, "Error al recuperar las ventas.");
+            return View("Error");
         }
 
         public async Task<IActionResult> Create()
@@ -53,66 +35,38 @@ namespace Ventas.Web.Controllers
 
         public async Task<IActionResult> UpdateSale(SaleUpdateRequest request)
         {
-            if (!ModelState.IsValid) return RedirectToAction("Error");
-
-            using (var httpClient = new HttpClient(_httpClientHandler))
+            bool wasRequestSuccessful = await _httpService.Put(ModelState.IsValid, "http://localhost:5205/api/sales", request);
+            if (wasRequestSuccessful is false)
             {
-                var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-                var response = await httpClient.PutAsync("http://localhost:5205/api/sales", content);
-
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    // Manejar el error de la solicitud a la API
-                    ModelState.AddModelError(string.Empty, "Error al crear el usuario.");
-                }
-                return RedirectToAction("Index");
+                ModelState.AddModelError(string.Empty, "Error al editar la venta.");
+                return View("Error");
             }
+
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateSale(SaleCreateRequest request)
         {
-            if (!ModelState.IsValid) return RedirectToAction("Error");
 
-            SaleCreateRequest salesCreateRequest = new SaleCreateRequest
-            {
-                numeroDocumento = request.numeroDocumento,
-                tipoPago = request.tipoPago,
-                total = request.total,
-            };
-
-            using (var httpClient = new HttpClient(_httpClientHandler))
-            {
-                var content = new StringContent(JsonConvert.SerializeObject(salesCreateRequest), Encoding.UTF8, "application/json");
-                var response = await httpClient.PostAsync("http://localhost:5205/api/sales", content);
-
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    ModelState.AddModelError(string.Empty, "Error al crear el usuario.");
-                }
-                return RedirectToAction("Index");
-            }
+            bool operationIsSuccessful = await _httpService.Post(ModelState.IsValid, "http://localhost:5205/api/sales", request);
+            if (operationIsSuccessful) return RedirectToAction("Index");
+            ModelState.AddModelError(string.Empty, "Error al crear la venta.");
+            return View("Error");
         }
 
         [HttpPost]
         public async Task<IActionResult> DeleteSale(int id)
         {
-            if (!ModelState.IsValid) return RedirectToAction("Error");
+            bool wasRequestSuccessful = await _httpService.Delete(ModelState.IsValid, $"http://localhost:5205/api/sales/{id}");
 
-            using (var httpClient = new HttpClient(_httpClientHandler))
+            if (wasRequestSuccessful is false)
             {
-                var response = await httpClient.DeleteAsync($"http://localhost:5205/api/sales/{id}");
-
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    // Manejar el error de la solicitud a la API
-                    ModelState.AddModelError(string.Empty, "Error al crear el usuario.");
-                }
-                return RedirectToAction("Index");
+                ModelState.AddModelError(string.Empty, "Error al eliminar la venta.");
+                return View("Error");
             }
+
+            return RedirectToAction("Index");
         }
     }
 }

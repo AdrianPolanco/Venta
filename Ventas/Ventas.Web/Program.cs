@@ -1,7 +1,12 @@
+using Ventas.Web.Controllers;
+using Ventas.Web.Services.Abstractions;
+using Ventas.Web.Services.Implementations;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IHttpService, HttpService>();
 
 var app = builder.Build();
 

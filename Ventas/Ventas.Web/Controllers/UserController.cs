@@ -1,46 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using System.Net;
 using Ventas.Web.Models;
 using Ventas.Web.Models.Responses;
-using Newtonsoft.Json;
 using Ventas.Web.Models.Requests;
-using System.Text;
+using Ventas.Web.Services.Abstractions;
 
 namespace Ventas.Web.Controllers
 {
     public class UserController : Controller
     {
-        private readonly ILogger<UserController> _logger;
-        private HttpClientHandler _httpClientHandler = new HttpClientHandler();
+        private readonly IHttpService _httpService;
 
-        public UserController(ILogger<UserController> logger)
+        public UserController(IHttpService httpService)
         {
-            _logger = logger;
-            _httpClientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyError) => { return true; };
+            _httpService = httpService;
         }
-
         public async Task<IActionResult> Index()
         {
-            using(var httpClient = new HttpClient(_httpClientHandler))
-            {
-                using (var response = await httpClient.GetAsync("http://localhost:5205/api/users"))
-                {
-                    if(response.StatusCode == HttpStatusCode.OK)
-                    {
-                        string apiResponse = await response.Content.ReadAsStringAsync();
-                        ResponseResult<List<UserGetResponse>> rawResult = JsonConvert.DeserializeObject<ResponseResult<List<UserGetResponse>>>(apiResponse);
+            List<UserGetResponse> users = await _httpService.Get<UserGetResponse>("http://localhost:5205/api/users");
+            if (users is not null) return View(users);
 
-                        if (rawResult.Success && rawResult.Result is not null)
-                        {
-                            List<UserGetResponse> users = rawResult.Result.Select(e => e).ToList();
-                            return View(users);
-
-                        }
-                    }
-                }
-            }
-            return View();
+            ModelState.AddModelError(string.Empty, "Error al recuperar los usuarios.");
+            return View("Error");
         }
 
         public IActionResult Filter(string filterOption)
@@ -70,125 +51,64 @@ namespace Ventas.Web.Controllers
             return View(userUpdateRequest);
         }
 
-        public async Task<IActionResult> GetByRole()
-        {
-            if (!ModelState.IsValid) return RedirectToAction("Error");
+           public async Task<IActionResult> GetByRole()
+           {
+            List<UserGetResponse> users = await _httpService.Get<UserGetResponse>("http://localhost:5205/api/users/roles");
+            if (users is not null) return View(users);
 
-            using (var httpClient = new HttpClient(_httpClientHandler))
-            {
-                using (var response = await httpClient.GetAsync("http://localhost:5205/api/users/roles"))
-                {
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        string apiResponse = await response.Content.ReadAsStringAsync();
-                        ResponseResult<List<UserGetResponse>> rawResult = JsonConvert.DeserializeObject<ResponseResult<List<UserGetResponse>>>(apiResponse);
+            ModelState.AddModelError(string.Empty, "Error al recuperar los usuarios.");
+            return View("Error");
+          
+           }
+           public async Task<IActionResult> GetByName()
+           {
+                List<UserGetResponse> users = await _httpService.Get<UserGetResponse>("http://localhost:5205/api/users/names");
+                if (users is not null) return View(users);
 
-                        if (rawResult.Success && rawResult.Result is not null)
-                        {
-                            List<UserGetResponse> users = rawResult.Result.Select(e => e).ToList();
-                            return View(users);
+                ModelState.AddModelError(string.Empty, "Error al recuperar los usuarios.");
+                return View("Error");
+           }
+           public async Task<IActionResult> CreateUser(UserCreateRequest request)
+           {
 
-                        }
-                    }
-                }
-            }
-            return View();
+                bool operationIsSuccessful = await _httpService.Post(ModelState.IsValid,"http://localhost:5205/api/users", request);
+                if (operationIsSuccessful) return RedirectToAction("Index");
+                ModelState.AddModelError(string.Empty, "Error al crear el usuario.");
+                return View("Error");
         }
-        public async Task<IActionResult> GetByName()
-        {
-            if (!ModelState.IsValid) return RedirectToAction("Error");
 
-            using (var httpClient = new HttpClient(_httpClientHandler))
+          public async Task<IActionResult> UpdateUser(UserUpdateRequest request)
+           {
+            bool wasRequestSuccessful = await _httpService.Put(ModelState.IsValid, "http://localhost:5205/api/users", request);
+            if (wasRequestSuccessful is false)
             {
-                using (var response = await httpClient.GetAsync("http://localhost:5205/api/users/names"))
-                {
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        string apiResponse = await response.Content.ReadAsStringAsync();
-                        ResponseResult<List<UserGetResponse>> rawResult = JsonConvert.DeserializeObject<ResponseResult<List<UserGetResponse>>>(apiResponse);
-
-                        if (rawResult.Success && rawResult.Result is not null)
-                        {
-                            List<UserGetResponse> users = rawResult.Result.Select(e => e).ToList();
-                            return View(users);
-
-                        }
-                    }
-                }
+                ModelState.AddModelError(string.Empty, "Error al editar el usuario.");
+                return View("Error");
             }
-            return View();
-        }
-        public async Task<IActionResult> CreateUser(UserCreateRequest request)
-        {
 
-            if (!ModelState.IsValid) return RedirectToAction("Error");
+               return RedirectToAction("Index");              
+           }
 
-            UserCreateRequest userCreateRequest = new()
-            {
-                nombreCompleto = request.nombreCompleto,
-                correo = request.correo,
-                clave = request.clave,
-                idRol = request.idRol,
-                esActivo = request.esActivo,
-            };
+        
+           [HttpPost]
+           public async Task<IActionResult> DeleteUser(int id)
+           {
+                bool wasRequestSuccessful = await _httpService.Delete(ModelState.IsValid, $"http://localhost:5205/api/users/{id}");
 
-            using (var httpClient = new HttpClient(_httpClientHandler))
-            { 
-               var content = new StringContent(JsonConvert.SerializeObject(userCreateRequest), Encoding.UTF8, "application/json");
-               var response = await httpClient.PostAsync("http://localhost:5205/api/users", content);
+                if (wasRequestSuccessful is false)
+                {
+                    ModelState.AddModelError(string.Empty, "Error al eliminar el usuario.");
+                    return View("Error");
+                }
+
+                return RedirectToAction("Index");
+           }
            
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    // Manejar el error de la solicitud a la API
-                    ModelState.AddModelError(string.Empty, "Error al crear el usuario.");
-                }
-                return RedirectToAction("Index"); 
-            }
-        }
-
-        public async Task<IActionResult> UpdateUser(UserUpdateRequest request)
-        {
-            if (!ModelState.IsValid) return RedirectToAction("Error");
-
-            using (var httpClient = new HttpClient(_httpClientHandler))
-            {
-                var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-                var response = await httpClient.PutAsync("http://localhost:5205/api/users", content);
-
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    // Manejar el error de la solicitud a la API
-                    ModelState.AddModelError(string.Empty, "Error al crear el usuario.");
-                }
-                return RedirectToAction("Index");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> DeleteUser(int id)
-        {
-            if (!ModelState.IsValid) return RedirectToAction("Error");
-
-            using (var httpClient = new HttpClient(_httpClientHandler))
-            {
-                var response = await httpClient.DeleteAsync($"http://localhost:5205/api/users/{id}");
-
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    // Manejar el error de la solicitud a la API
-                    ModelState.AddModelError(string.Empty, "Error al crear el usuario.");
-                }
-                return RedirectToAction("Index");
-            }
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+           [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+           public IActionResult Error()
+           {
+               return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+           }
     }
 }
