@@ -67,9 +67,12 @@ El sexto endpoint es una ruta GET, para obtener los usuarios ordenados por fecha
 
 
 El septimo endpoint es una ruta GET, para obtener los usuarios ordenados por sus roles: 
+
 ![user_roles](https://github.com/Abnerdotel/Venta/assets/116674818/e550dcac-7292-494c-b222-2353c644d63b)
 
 El octavo y ultimo endpoint de este controlador es una ruta GET, para obtener los usuarios por nombre, en orden alfabetico:
 ![usernames](https://github.com/Abnerdotel/Venta/assets/116674818/90ebc490-a2e0-48f1-8d79-f2c25b8a4abf)
 
+*** Video sobre el proyecto final ***
 
+https://www.youtube.com/watch?v=1yEYJTn50F8
